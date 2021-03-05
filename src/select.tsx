@@ -5,7 +5,8 @@ import {
   HTMLChakraProps,
   StylesProvider,
   useMultiStyleConfig,
-  useStyles
+  useStyles,
+  forwardRef
 } from '@chakra-ui/system'
 import { dataAttr, MaybeRenderProp, runIfFn } from '@chakra-ui/utils'
 import Downshift, {
@@ -17,52 +18,60 @@ import { SelectProvider, useSelect } from './use-select'
 
 export interface SelectLabelProps extends HTMLChakraProps<'span'> {}
 
-export function SelectLabel(props: SelectLabelProps) {
-  const styles = useStyles()
-  return <chakra.span __css={styles.label} {...props} />
-}
+export const SelectLabel = forwardRef<SelectLabelProps, 'span'>(
+  (props, ref) => {
+    const styles = useStyles()
+    return <chakra.span ref={ref} __css={styles.label} {...props} />
+  }
+)
 
 export interface SelectIndicatorProps extends HTMLChakraProps<'div'> {}
 
-export function SelectIndicator({ children, ...props }: SelectIndicatorProps) {
-  return (
-    <chakra.div
-      d='flex'
-      flexShrink={0}
-      alignItems='center'
-      alignSelf='stretch'
-      {...props}
-    >
+export const SelectIndicator = forwardRef<SelectIndicatorProps, 'div'>(
+  ({ children, ...props }, ref) => {
+    return (
       <chakra.div
-        as='span'
-        position='absolute'
-        insetY={0}
-        right={0}
-        display='flex'
+        ref={ref}
+        d='flex'
+        flexShrink={0}
         alignItems='center'
-        pr={2}
-        pointerEvents='none'
+        alignSelf='stretch'
+        {...props}
       >
-        {children}
+        <chakra.div
+          as='span'
+          position='absolute'
+          insetY={0}
+          right={0}
+          display='flex'
+          alignItems='center'
+          pr={2}
+          pointerEvents='none'
+        >
+          {children}
+        </chakra.div>
       </chakra.div>
-    </chakra.div>
-  )
-}
+    )
+  }
+)
 
 export interface SelectControlProps extends HTMLChakraProps<'button'> {}
 
-export function SelectControl(props: SelectControlProps) {
-  const { getToggleButtonProps } = useSelect()
-  const styles = useStyles()
+export const SelectControl = forwardRef<SelectControlProps, 'button'>(
+  (props, ref) => {
+    const { getToggleButtonProps } = useSelect()
+    const styles = useStyles()
 
-  return (
-    <chakra.button
-      __css={styles.control}
-      {...getToggleButtonProps()}
-      {...props}
-    />
-  )
-}
+    return (
+      <chakra.button
+        ref={ref}
+        __css={styles.control}
+        {...getToggleButtonProps()}
+        {...props}
+      />
+    )
+  }
+)
 
 export type SelectOptionProps<Item = any> = Omit<
   GetItemPropsOptions<Item>,
@@ -101,32 +110,36 @@ export function SelectOption<Item = any>({
 
 export interface SelectMenuListProps extends HTMLChakraProps<'ul'> {}
 
-export function SelectMenuList({ children, ...props }: SelectMenuListProps) {
-  const { getMenuProps, isOpen } = useSelect()
-  const styles = useStyles()
+export const SelectMenuList = forwardRef<SelectMenuListProps, 'ul'>(
+  ({ children, ...props }, ref) => {
+    const { getMenuProps, isOpen } = useSelect()
+    const styles = useStyles()
 
-  if (!isOpen) return null
+    if (!isOpen) return null
 
-  return (
-    <chakra.ul
-      __css={{
-        ...styles.list,
-        fontSize: { base: 'base', sm: 'sm' }
-      }}
-      {...getMenuProps()}
-      {...props}
-    >
-      {isOpen && children}
-    </chakra.ul>
-  )
-}
+    return (
+      <chakra.ul
+        ref={ref}
+        __css={{
+          ...styles.list,
+          fontSize: { base: 'base', sm: 'sm' }
+        }}
+        {...getMenuProps()}
+        {...props}
+      >
+        {isOpen && children}
+      </chakra.ul>
+    )
+  }
+)
 
 export interface SelectMenuProps extends HTMLChakraProps<'div'> {}
 
-export function SelectMenu(props: SelectMenuProps) {
+export const SelectMenu = forwardRef<SelectMenuProps, 'div'>((props, ref) => {
   const styles = useStyles()
   return (
     <chakra.div
+      ref={ref}
       __css={{
         pos: 'absolute',
         ...styles.menu
@@ -134,7 +147,7 @@ export function SelectMenu(props: SelectMenuProps) {
       {...props}
     />
   )
-}
+})
 
 export type SelectProps<Item = any> = Omit<ChakraProps, 'onChange'> &
   Pick<DownshiftProps<Item>, 'itemToString' | 'defaultIsOpen'> & {
