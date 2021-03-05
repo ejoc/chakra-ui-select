@@ -14,10 +14,11 @@ npm install --save chakra-ui-select
 
 ```tsx
 import React, { Component } from 'react'
-import { chakra, ChakraProvider, Icon } from '@chakra-ui/react'
+import { chakra, ChakraProvider, extendTheme, Icon } from '@chakra-ui/react'
 import { ChevronDownIcon } from '@chakra-ui/icons'
 
 import {
+  theme as selectTheme,
   Select,
   SelectControl,
   SelectLabel,
@@ -26,7 +27,12 @@ import {
   SelectMenuList,
   SelectOption
 } from 'chakra-ui-select'
-import theme from './theme'
+
+const theme = extendTheme({
+  components: {
+    Select: selectTheme
+  }
+})
 
 const fruits = [
   { value: 'apple', label: 'Apple' },

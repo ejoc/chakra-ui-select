@@ -42,12 +42,11 @@ function baseStyleOption(props: Dict) {
       bg: mode(`gray.100`, `whiteAlpha.100`)(props)
     },
     _active: {
-      bg: mode(`gray.200`, `whiteAlpha.200`)(props)
+      bg: mode(`gray.100`, `whiteAlpha.200`)(props)
     },
     _expanded: {
       bg: mode(`gray.100`, `whitxeAlpha.100`)(props)
     },
-    _hover: { bg: 'gray.50' },
     _selected: {
       bg: 'gray.50',
       fontWeight: 'semibold'

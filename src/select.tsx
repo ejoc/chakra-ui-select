@@ -80,6 +80,10 @@ export type SelectOptionProps<Item = any> = Omit<
   Omit<ChakraProps, 'value'> & {
     value: GetItemPropsOptions<Item>['item']
     isDisabled?: boolean
+    children: MaybeRenderProp<{
+      isSelected?: boolean
+      isActive?: boolean
+    }>
   }
 
 export function SelectOption<Item = any>({
@@ -89,11 +93,13 @@ export function SelectOption<Item = any>({
   isDisabled,
   ...props
 }: SelectOptionProps<Item>) {
-  const { getItemProps, selectedItem } = useSelect()
+  const { getItemProps, selectedItem, highlightedIndex } = useSelect()
   const styles = useStyles()
   const isSelected = selectedItem === value
+  const isActive = highlightedIndex === index
   return (
     <chakra.li
+      bg={isActive ? 'gray.50' : 'white'}
       data-disabled={dataAttr(isDisabled)}
       {...getItemProps({
         item: value,
@@ -103,7 +109,10 @@ export function SelectOption<Item = any>({
       __css={styles.option}
       {...props}
     >
-      {children}
+      {runIfFn(children, {
+        isSelected,
+        isActive
+      })}
     </chakra.li>
   )
 }
