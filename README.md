@@ -14,14 +14,58 @@ npm install --save chakra-ui-select
 
 ```tsx
 import React, { Component } from 'react'
+import { chakra, ChakraProvider, Icon } from '@chakra-ui/react'
+import { ChevronDownIcon } from '@chakra-ui/icons'
 
-import MyComponent from 'chakra-ui-select'
-import 'chakra-ui-select/dist/index.css'
+import {
+  Select,
+  SelectControl,
+  SelectLabel,
+  SelectIndicator,
+  SelectMenu,
+  SelectMenuList,
+  SelectOption
+} from 'chakra-ui-select'
+import theme from './theme'
 
-class Example extends Component {
-  render() {
-    return <MyComponent />
-  }
+const fruits = [
+  { value: 'apple', label: 'Apple' },
+  { value: 'pear', label: 'Pear' },
+  { value: 'orange', label: 'Orange' },
+  { value: 'grape', label: 'Grape' },
+  { value: 'banana', label: 'Banana' }
+]
+
+const fruitValues = fruits.map((item) => item.value)
+
+function Example() {
+  return (
+    <ChakraProvider theme={theme}>
+      <Select my={4}>
+        {({ selectedItem }) => {
+          return (
+            <>
+              <SelectControl>
+                <SelectLabel>{selectedItem ?? 'Select'}</SelectLabel>
+                <SelectIndicator>
+                  <Icon as={ChevronDownIcon} />
+                </SelectIndicator>
+              </SelectControl>
+              <SelectMenu zIndex={10}>
+                <SelectMenuList>
+                  {fruitValues.map((option, index) => (
+                    <SelectOption key={option} value={option} index={index}>
+                      {option}
+                    </SelectOption>
+                  ))}
+                </SelectMenuList>
+              </SelectMenu>
+            </>
+          )
+        }}
+      </Select>
+    </ChakraProvider>
+  )
 }
 ```
 

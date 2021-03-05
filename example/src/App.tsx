@@ -1,21 +1,23 @@
 import React, { useState } from 'react'
-import { chakra, ChakraProvider, Icon } from "@chakra-ui/react"
+import { chakra, ChakraProvider, extendTheme, Icon } from "@chakra-ui/react"
 import { ChevronDownIcon } from '@chakra-ui/icons';
 
 import {
+  theme as selectTheme,
   Select,
-  // SelectMultiple,
   SelectControl,
-  // SelectedItemTag,
-  // SelectMultipleControl,
-  // SelectedList,
   SelectLabel,
   SelectIndicator,
   SelectMenu,
   SelectMenuList,
   SelectOption,
 } from 'chakra-ui-select'
-import theme from './theme';
+
+const theme = extendTheme({
+  components: {
+    Select: selectTheme
+  }
+})
 
 const fruits = [
   { value: 'apple', label: 'Apple' },
@@ -37,12 +39,12 @@ const App = () => {
   return (
     <ChakraProvider theme={theme}>
       <chakra.div my={4} maxW="lg" mx="auto">
-        <Select my={4} itemToString={(item) => item?.label ?? 'Select'}>
+        <Select my={4}>
           {({ selectedItem }) => {
             return (
               <>
               <SelectControl>
-                {selectedItem ? <SelectLabel>{selectedItem}</SelectLabel> : <SelectLabel>Select</SelectLabel>}
+                <SelectLabel>{selectedItem ?? 'Select'}</SelectLabel>
                 <SelectIndicator>
                   <Icon as={ChevronDownIcon} />
                 </SelectIndicator>
@@ -58,11 +60,6 @@ const App = () => {
                       {option}
                     </SelectOption>
                   ))}
-                  {/* <SelectOption item="apple" index={0}>apple</SelectOption>
-                  <SelectOption item="pear" index={1}>pear</SelectOption>
-                  <SelectOption item="orange" index={2}>orange</SelectOption>
-                  <SelectOption item="grape" index={3}>grape</SelectOption>
-                  <SelectOption item="banana" index={4}>banana</SelectOption> */}
                 </SelectMenuList>
                 </SelectMenu>
               </>
@@ -76,7 +73,7 @@ const App = () => {
             return (
               <>
               <SelectControl>
-                {selectedItem ? <SelectLabel>{selectedItem.label}</SelectLabel> : <SelectLabel>Select</SelectLabel>}
+                <SelectLabel>{selectedItem?.label ?? 'Select'}</SelectLabel>
                 <SelectIndicator>
                   <Icon as={ChevronDownIcon} />
                 </SelectIndicator>
@@ -106,7 +103,7 @@ const App = () => {
           itemToString={(item) => item?.label ?? 'Select'}
         >
           <SelectControl>
-            {selected ? <SelectLabel>{selected.label}</SelectLabel> : <SelectLabel>Select</SelectLabel>}
+            <SelectLabel>{selected?.label ?? 'Select'}</SelectLabel>
             <SelectIndicator>
               <Icon as={ChevronDownIcon} />
             </SelectIndicator>

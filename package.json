@@ -4,7 +4,10 @@
   "description": "Chakra ui select",
   "author": "ejoc",
   "license": "MIT",
-  "repository": "ejoc/chakra-ui-select",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ejoc/chakra-ui-select.git"
+  },
   "main": "dist/index.js",
   "module": "dist/index.modern.js",
   "source": "src/index.tsx",
@@ -64,7 +67,20 @@
   ],
   "dependencies": {
     "@chakra-ui/tag": "^1.1.1",
+    "@chakra-ui/theme-tools": "^1.0.4",
     "@chakra-ui/utils": "^1.2.0",
     "downshift": "^6.1.0"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/ejoc/chakra-ui-select/issues"
+  },
+  "homepage": "https://github.com/ejoc/chakra-ui-select#readme",
+  "directories": {
+    "example": "example"
+  },
+  "keywords": [
+    "Chakra",
+    "ui",
+    "Select"
+  ]
 }

@@ -1,4 +1,4 @@
-import { getColor, mode } from "@chakra-ui/theme-tools"
+import { getColor, mode } from '@chakra-ui/theme-tools'
 
 const parts = ['control', 'menu', 'list', 'option', 'label']
 
@@ -12,7 +12,7 @@ function baseStyleMenu(props: Dict) {
     rounded: 'md',
     bg: mode(`#fff`, `gray.700`)(props),
     zIndex: 1,
-    boxShadow: mode(`lg`, `dark-lg`)(props),
+    boxShadow: mode(`lg`, `dark-lg`)(props)
   }
 }
 
@@ -21,10 +21,10 @@ const baseStyleList = {
   py: 1,
   fontSize: 'base',
   overflow: 'auto',
-  borderRadius: "md",
+  borderRadius: 'md',
   border: '1px',
   borderColor: 'gray.50',
-  _focus: { outline: 'none' },
+  _focus: { outline: 'none' }
 }
 
 function baseStyleOption(props: Dict) {
@@ -37,25 +37,25 @@ function baseStyleOption(props: Dict) {
     userSelect: 'none',
     cursor: 'default',
     fontWeight: 'normal',
-    transition: "background 50ms ease-in 0s",
+    transition: 'background 50ms ease-in 0s',
     _focus: {
-      bg: mode(`gray.100`, `whiteAlpha.100`)(props),
+      bg: mode(`gray.100`, `whiteAlpha.100`)(props)
     },
     _active: {
-      bg: mode(`gray.200`, `whiteAlpha.200`)(props),
+      bg: mode(`gray.200`, `whiteAlpha.200`)(props)
     },
     _expanded: {
-      bg: mode(`gray.100`, `whitxeAlpha.100`)(props),
+      bg: mode(`gray.100`, `whitxeAlpha.100`)(props)
     },
     _hover: { bg: 'gray.50' },
     _selected: {
       bg: 'gray.50',
-      fontWeight: 'semibold',
+      fontWeight: 'semibold'
     },
     _disabled: {
       opacity: 0.4,
-      cursor: "not-allowed",
-    },
+      cursor: 'not-allowed'
+    }
   }
 }
 
@@ -92,7 +92,7 @@ function baseStyleLabel(props: Dict) {
     d: 'block',
     fontSize: 'sm',
     fontWeight: 'medium',
-    color: mode(`gray.700`, `gray.50`)(props),
+    color: mode(`gray.700`, `gray.50`)(props)
   }
 }
 
@@ -101,11 +101,10 @@ const baseStyle = (props: Dict) => ({
   list: baseStyleList,
   option: baseStyleOption(props),
   control: baseStyleControl(props),
-  label: baseStyleLabel(props),
+  label: baseStyleLabel(props)
 })
-
 
 export default {
   parts,
-  baseStyle,
+  baseStyle
 }
