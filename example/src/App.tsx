@@ -4,17 +4,18 @@ import { ChevronDownIcon } from '@chakra-ui/icons';
 
 import {
   Select,
-  SelectMultiple,
+  // SelectMultiple,
   SelectControl,
-  SelectedItemTag,
-  SelectMultipleControl,
-  SelectedList,
+  // SelectedItemTag,
+  // SelectMultipleControl,
+  // SelectedList,
   SelectLabel,
   SelectIndicator,
   SelectMenu,
   SelectMenuList,
   SelectOption,
 } from 'chakra-ui-select'
+import theme from './theme';
 
 const fruits = [
   { value: 'apple', label: 'Apple' },
@@ -34,7 +35,7 @@ type Option = {
 const App = () => {
   const [selected, setSelected] = useState<Option | null>()
   return (
-    <ChakraProvider>
+    <ChakraProvider theme={theme}>
       <chakra.div my={4} maxW="lg" mx="auto">
         <Select my={4} itemToString={(item) => item?.label ?? 'Select'}>
           {({ selectedItem }) => {
@@ -125,7 +126,7 @@ const App = () => {
           </SelectMenu>
         </Select>
 
-        <SelectMultiple
+        {/* <SelectMultiple
           w="full"
           // value={[]}
           // onChange={(changes) => console.log('changes', changes)}
@@ -174,7 +175,7 @@ const App = () => {
               </>
             );
           }}
-        </SelectMultiple>
+        </SelectMultiple> */}
       </chakra.div>
     </ChakraProvider>
   )

@@ -22,9 +22,7 @@ export function SelectedItemTag({
       <TagCloseButton
         onClick={(e) => {
           e.stopPropagation()
-          if (removeSelectedItem) {
-            removeSelectedItem(selectedItem)
-          }
+          removeSelectedItem?.(selectedItem)
         }}
       />
     </Tag>

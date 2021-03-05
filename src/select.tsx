@@ -1,21 +1,25 @@
 import React from 'react'
-import { chakra, ChakraProps, HTMLChakraProps } from '@chakra-ui/system'
-import { MaybeRenderProp, runIfFn } from '@chakra-ui/utils'
-import Downshift, { ControllerStateAndHelpers, DownshiftProps } from 'downshift'
+import {
+  chakra,
+  ChakraProps,
+  HTMLChakraProps,
+  StylesProvider,
+  useMultiStyleConfig,
+  useStyles
+} from '@chakra-ui/system'
+import { dataAttr, MaybeRenderProp, runIfFn } from '@chakra-ui/utils'
+import Downshift, {
+  ControllerStateAndHelpers,
+  DownshiftProps,
+  GetItemPropsOptions
+} from 'downshift'
 import { SelectProvider, useSelect } from './use-select'
 
 export interface SelectLabelProps extends HTMLChakraProps<'span'> {}
 
 export function SelectLabel(props: SelectLabelProps) {
-  return (
-    <chakra.span
-      d='block'
-      fontSize='sm'
-      fontWeight='medium'
-      color='gray.700'
-      {...props}
-    />
-  )
+  const styles = useStyles()
+  return <chakra.span __css={styles.label} {...props} />
 }
 
 export interface SelectIndicatorProps extends HTMLChakraProps<'div'> {}
@@ -49,34 +53,85 @@ export interface SelectControlProps extends HTMLChakraProps<'button'> {}
 
 export function SelectControl(props: SelectControlProps) {
   const { getToggleButtonProps } = useSelect()
-  // const theme = useTheme()
+  const styles = useStyles()
 
   return (
     <chakra.button
-      bg='white'
-      position='relative'
-      w='full'
-      border='1px'
-      borderColor='gray.300'
-      rounded='md'
-      shadow='base'
-      pl={3}
-      pr={10}
-      py={2}
-      textAlign='left'
-      cursor='default'
-      _focus={{
-        outline: 'none',
-        borderColor: 'gray.400'
-        // boxShadow: `0 0 0 1px ${getColor(theme, 'gray.400')}`
+      __css={styles.control}
+      {...getToggleButtonProps()}
+      {...props}
+    />
+  )
+}
+
+export type SelectOptionProps<Item = any> = Omit<
+  GetItemPropsOptions<Item>,
+  'item' | 'disabled' | 'value'
+> &
+  Omit<ChakraProps, 'value'> & {
+    value: GetItemPropsOptions<Item>['item']
+    isDisabled?: boolean
+  }
+
+export function SelectOption<Item = any>({
+  children,
+  value,
+  index,
+  isDisabled,
+  ...props
+}: SelectOptionProps<Item>) {
+  const { getItemProps, selectedItem } = useSelect()
+  const styles = useStyles()
+  const isSelected = selectedItem === value
+  return (
+    <chakra.li
+      data-disabled={dataAttr(isDisabled)}
+      {...getItemProps({
+        item: value,
+        index
+      })}
+      aria-selected={props.isSelected ? 'true' : `${isSelected}`}
+      __css={styles.option}
+      {...props}
+    >
+      {children}
+    </chakra.li>
+  )
+}
+
+export interface SelectMenuListProps extends HTMLChakraProps<'ul'> {}
+
+export function SelectMenuList({ children, ...props }: SelectMenuListProps) {
+  const { getMenuProps, isOpen } = useSelect()
+  const styles = useStyles()
+
+  if (!isOpen) return null
+
+  return (
+    <chakra.ul
+      __css={{
+        ...styles.list,
+        fontSize: { base: 'base', sm: 'sm' }
       }}
-      _readOnly={{ boxShadow: 'none !important', userSelect: 'all' }}
-      _disabled={{
-        opacity: 0.4,
-        cursor: 'not-allowed'
+      {...getMenuProps()}
+      {...props}
+    >
+      {isOpen && children}
+    </chakra.ul>
+  )
+}
+
+export interface SelectMenuProps extends HTMLChakraProps<'div'> {}
+
+export function SelectMenu(props: SelectMenuProps) {
+  const styles = useStyles()
+  return (
+    <chakra.div
+      __css={{
+        pos: 'absolute',
+        ...styles.menu
       }}
       {...props}
-      {...getToggleButtonProps()}
     />
   )
 }
@@ -107,6 +162,7 @@ export function Select<Item = any>({
   itemToString,
   ...props
 }: SelectProps<Item>) {
+  const styles = useMultiStyleConfig('Select', props)
   return (
     <Downshift
       onChange={onChange}
@@ -115,13 +171,15 @@ export function Select<Item = any>({
     >
       {(downshift) => (
         <chakra.div pos='relative' {...props} {...downshift.getRootProps()}>
-          <SelectProvider value={downshift}>
-            {runIfFn(children, {
-              isOpen: downshift.isOpen,
-              highlightedIndex: downshift.highlightedIndex,
-              selectedItem: downshift.selectedItem
-            })}
-          </SelectProvider>
+          <StylesProvider value={styles}>
+            <SelectProvider value={downshift}>
+              {runIfFn(children, {
+                isOpen: downshift.isOpen,
+                highlightedIndex: downshift.highlightedIndex,
+                selectedItem: downshift.selectedItem
+              })}
+            </SelectProvider>
+          </StylesProvider>
         </chakra.div>
       )}
     </Downshift>
