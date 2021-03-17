@@ -30,7 +30,7 @@ import {
 
 const theme = extendTheme({
   components: {
-    Select: selectTheme
+    SelectSingle: selectTheme
   }
 })
 

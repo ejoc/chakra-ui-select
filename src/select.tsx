@@ -184,7 +184,7 @@ export function Select<Item = any>({
   itemToString,
   ...props
 }: SelectProps<Item>) {
-  const styles = useMultiStyleConfig('Select', {})
+  const styles = useMultiStyleConfig('SelectSingle', {})
   return (
     <Downshift
       onChange={onChange}
