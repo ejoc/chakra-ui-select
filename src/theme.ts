@@ -11,7 +11,7 @@ function baseStyleMenu(props: Dict) {
     w: 'full',
     rounded: 'md',
     bg: mode(`#fff`, `gray.700`)(props),
-    zIndex: 1,
+    zIndex: 2,
     boxShadow: mode(`lg`, `dark-lg`)(props)
   }
 }
@@ -68,11 +68,20 @@ function baseStyleControl(props: Dict) {
     borderColor: 'gray.300',
     rounded: 'md',
     shadow: 'base',
-    pl: 3,
-    pr: 10,
-    py: 2,
     textAlign: 'left',
     cursor: 'default',
+    display: 'flex',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    minH: 10,
+    transition: 'ease-in-out',
+    outline: 'none',
+    _focusWithin: {
+      outline: 'none',
+      borderColor: 'gray.400',
+      boxShadow: `0 0 0 1px ${getColor(theme, 'gray.400')}`
+    },
     _focus: {
       outline: 'none',
       borderColor: 'gray.400',

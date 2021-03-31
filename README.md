@@ -57,7 +57,7 @@ function Example() {
                   <Icon as={ChevronDownIcon} />
                 </SelectIndicator>
               </SelectControl>
-              <SelectMenu zIndex={10}>
+              <SelectMenu>
                 <SelectMenuList>
                   {fruitValues.map((option, index) => (
                     <SelectOption key={option} value={option} index={index}>
