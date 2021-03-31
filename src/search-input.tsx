@@ -17,8 +17,7 @@ const sizerStyle = {
   visibility: 'hidden',
   height: 0,
   overflow: 'scroll',
-  whiteSpace: 'pre',
-  boxSizing: 'content-box'
+  whiteSpace: 'pre'
 }
 
 const copyStyles = (
@@ -111,28 +110,33 @@ export const SearchInput = forwardRef<SearchInputProps, 'input'>(
     }
 
     const _wrapperStyle = {
-      ...wrapperStyle,
       d: 'inline-block',
       visibility: isDisabled ? 'hidden' : 'visible',
-      color: 'gray.800'
+      color: 'gray.800',
+      w: '100%',
+      ...wrapperStyle
     } as HTMLChakraProps<'div'>
 
     const _inputProps = {
-      ...inputProps,
       w: `${inputWidth}px`,
-      opacity: isDisabled ? 0 : 1,
       border: 0,
       fontSize: 'inherit',
       outline: 0,
       padding: 0,
       color: 'inherit',
       boxSizing: 'content-box',
-      background: '0px center'
+      background: '0px center',
+      maxW: '100%',
+      ...inputProps
     } as HTMLChakraProps<'input'>
 
     return (
       <chakra.div className={_className} {..._wrapperStyle}>
-        <chakra.input {..._inputProps} ref={inputRef} />
+        <chakra.input
+          placeholder={placeholder}
+          {..._inputProps}
+          ref={inputRef}
+        />
         <chakra.div ref={sizerRef} sx={sizerStyle}>
           {sizerValue}
         </chakra.div>

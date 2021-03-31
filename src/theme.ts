@@ -91,6 +91,12 @@ function baseStyleControl(props: Dict) {
     _disabled: {
       opacity: 0.4,
       cursor: 'not-allowed'
+    },
+    _hover: {
+      borderColor: 'gray.400',
+      _disabled: {
+        borderColor: 'gray.300'
+      }
     }
   }
 }

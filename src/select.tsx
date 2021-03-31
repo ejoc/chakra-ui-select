@@ -25,13 +25,6 @@ import Downshift, {
 } from 'downshift'
 import { SelectProvider, useSelect } from './use-select'
 
-export interface SelectLabelProps extends HTMLChakraProps<'div'> {}
-
-export const SelectLabel = forwardRef<SelectLabelProps, 'div'>((props, ref) => {
-  const styles = useStyles()
-  return <chakra.div ref={ref} __css={styles.label} {...props} />
-})
-
 export interface SelectValueProps extends HTMLChakraProps<'div'> {}
 export const SelectValue = forwardRef<SelectValueProps, 'div'>((props, ref) => {
   return (
@@ -44,6 +37,8 @@ export const SelectValue = forwardRef<SelectValueProps, 'div'>((props, ref) => {
       overflow='hidden'
       padding='2px 8px'
       boxSizing='border-box'
+      pr={12}
+      w='100%'
       {...props}
     />
   )
@@ -61,6 +56,9 @@ export const SelectIndicator = forwardRef<SelectIndicatorProps, 'div'>(
         alignItems='center'
         alignSelf='stretch'
         padding='2px 8px'
+        pos='absolute'
+        insetY={0}
+        right={0}
         {...props}
       >
         {children}
@@ -127,12 +125,13 @@ export interface SelectControlProps extends HTMLChakraProps<'button'> {}
 
 export const SelectControl = forwardRef<SelectControlProps, 'button'>(
   (props, ref) => {
-    const { getToggleButtonProps } = useSelect()
+    const { getToggleButtonProps, isDisabled } = useSelect()
     const styles = useStyles()
 
     return (
       <chakra.button
         ref={ref}
+        disabled={isDisabled}
         __css={styles.control}
         {...getToggleButtonProps()}
         {...props}
@@ -145,28 +144,39 @@ export interface SelectAutocomplete extends HTMLChakraProps<'div'> {}
 export const SelectAutocomplete = forwardRef<SelectAutocomplete, 'div'>(
   (props, ref) => {
     const styles = useStyles()
+    const { isDisabled } = useSelect()
 
-    return <chakra.div ref={ref} __css={styles.control} {...props} />
+    return (
+      <chakra.div
+        data-disabled={dataAttr(isDisabled)}
+        ref={ref}
+        __css={styles.control}
+        {...props}
+      />
+    )
   }
 )
 
 export const SelectButton = forwardRef<SelectControlProps, 'button'>(
   (props, ref) => {
-    const { getToggleButtonProps, inputRef } = useSelect()
+    const { getToggleButtonProps, inputRef, isDisabled } = useSelect()
     return (
-      <chakra.div
+      <chakra.button
+        tabIndex={-1}
+        disabled={isDisabled}
         pos='absolute'
         inset={0}
         w='100%'
         h='100%'
         cursor='default'
+        _focus={{ outline: 'none' }}
+        _disabled={{
+          opacity: 0.4,
+          cursor: 'not-allowed'
+        }}
         ref={ref}
         {...getToggleButtonProps({
-          onClick: () => inputRef?.current?.focus(),
-          onBlur: (event) => {
-            // @ts-ignore
-            event.preventDownshiftDefault = true
-          }
+          onClick: () => inputRef?.current?.focus()
         })}
         {...props}
       />
@@ -177,19 +187,37 @@ export const SelectButton = forwardRef<SelectControlProps, 'button'>(
 export interface SelectSearchInputProps extends HTMLChakraProps<'input'> {}
 export const SelectSearchInput = forwardRef<SelectSearchInputProps, 'input'>(
   (props, ref) => {
-    const { getInputProps, isDisabled, inputRef } = useSelect()
+    const {
+      getInputProps,
+      isDisabled,
+      inputRef,
+      selectedItem,
+      itemToString
+    } = useSelect()
     useImperativeHandle(ref, () => ({
       focus: () => {
         inputRef?.current?.focus()
       }
     }))
+    const placeholder = itemToString(selectedItem) || props.placeholder
     return (
       <SelectValue>
+        {isDisabled && placeholder && (
+          <chakra.span
+            pos='absolute'
+            overflow='hidden'
+            textOverflow='ellipsis'
+            whiteSpace='nowrap'
+          >
+            {placeholder}
+          </chakra.span>
+        )}
         <chakra.div
           m={0.5}
           pb={0.5}
           pt={0.5}
           visibility={isDisabled ? 'hidden' : 'visible'}
+          w='100%'
         >
           <SearchInput
             isDisabled={isDisabled}
@@ -294,11 +322,11 @@ export type SelectProps<Item = any> = Omit<ChakraProps, 'onChange'> &
   Pick<DownshiftProps<Item>, 'itemToString' | 'defaultIsOpen'> & {
     isOpen?: boolean
     defaultHighlightedIndex?: number
+    value?: Item | null
     defaultValue?: Item
-    value?: Item
     isDisabled?: boolean
     onChange?(
-      selectedItem: Item | null,
+      selectedItem: Item | null | undefined,
       stateAndHelpers?: ControllerStateAndHelpers<Item>
     ): void
     children: MaybeRenderProp<{
@@ -325,7 +353,7 @@ export function Select<Item = any>({
   return (
     <Downshift
       onChange={onChange}
-      // inputValue=''
+      initialSelectedItem={defaultValue}
       defaultIsOpen={defaultIsOpen}
       itemToString={itemToString}
     >
