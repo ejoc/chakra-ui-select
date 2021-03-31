@@ -1188,6 +1188,14 @@
     "@chakra-ui/icon" "1.1.1"
     "@chakra-ui/utils" "1.2.0"
 
+"@chakra-ui/close-button@^1.1.2":
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/@chakra-ui/close-button/-/close-button-1.1.3.tgz#db0a0c62549a14c529deae8184d20466170fe3e8"
+  integrity sha512-pLj5E2or8VdQ69w/ZZ/B09E446B6wbmJFQ8fuqnaxOeBZKp3VtvOLXWDg23SsijKKgw71EBq0O7qUOKvQRygKA==
+  dependencies:
+    "@chakra-ui/icon" "1.1.3"
+    "@chakra-ui/utils" "1.4.0"
+
 "@chakra-ui/color-mode@1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@chakra-ui/color-mode/-/color-mode-1.1.0.tgz#fdb6f44790897754d2c2c444855be5af228ecb43"
@@ -1263,6 +1271,13 @@
   integrity sha512-dL1D1q11MM+cL849jmADSjY8KqOWplAEb/XgLXX/ZZau7GHqYAXIwdYnfXwOYBaypiosUvGsm9g2zU4iHYZtdg==
   dependencies:
     "@chakra-ui/utils" "1.2.0"
+
+"@chakra-ui/icon@1.1.3", "@chakra-ui/icon@^1.1.3":
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/@chakra-ui/icon/-/icon-1.1.3.tgz#5fbc310652fa20da973ea9422ed5e1a654596d23"
+  integrity sha512-XZ9RTU0J/qB5bZawUK5yk6YN3P2fi74aTLap1qygmodAPo5sIroRzfuXndezjAYFhuRjI62zfSs/FVhwJyhmsw==
+  dependencies:
+    "@chakra-ui/utils" "1.4.0"
 
 "@chakra-ui/icons@^1.0.5":
   version "1.0.5"
@@ -1611,6 +1626,16 @@
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@chakra-ui/utils/-/utils-1.2.0.tgz#9385950e91455ecf480eb52bca268d3a5f8c9d6d"
   integrity sha512-oMTX8BX1+MUf+iYUafFm9tNfwa3m1cqzMcE/5iQFmNcqKlZmuADnVL28Yw7jhoeouIjANaGY+f51qj9zHgDn9Q==
+  dependencies:
+    "@types/lodash.mergewith" "4.6.6"
+    "@types/object-assign" "4.0.30"
+    css-box-model "1.2.1"
+    lodash.mergewith "4.6.2"
+
+"@chakra-ui/utils@1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@chakra-ui/utils/-/utils-1.4.0.tgz#4b20c522141d68dc62b5c7be929bb6d1596db190"
+  integrity sha512-ND7NIilpncnkzcNBnAySGBFpOXb3urO1X9esSY0+M5zXiq+VSSfK9JuoJd3ilvV4Dbwgzil7hMAELBuHme4uTg==
   dependencies:
     "@types/lodash.mergewith" "4.6.6"
     "@types/object-assign" "4.0.30"
@@ -2300,12 +2325,22 @@
     csstype "^3.0.2"
 
 "@types/react@^16":
-  version "0.0.0"
-  uid ""
+  version "16.14.5"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.14.5.tgz#2c39b5cadefaf4829818f9219e5e093325979f4d"
+  integrity sha512-YRRv9DNZhaVTVRh9Wmmit7Y0UFhEVqXqCSw3uazRWMxa2x85hWQZ5BN24i7GXZbaclaLXEcodEeIHsjBA8eAMw==
+  dependencies:
+    "@types/prop-types" "*"
+    "@types/scheduler" "*"
+    csstype "^3.0.2"
 
 "@types/react@link:../node_modules/@types/react":
   version "0.0.0"
   uid ""
+
+"@types/scheduler@*":
+  version "0.16.1"
+  resolved "https://registry.yarnpkg.com/@types/scheduler/-/scheduler-0.16.1.tgz#18845205e86ff0038517aab7a18a62a6b9f71275"
+  integrity sha512-EaCxbanVeyxDRTQBkdLb3Bvl/HK7PBK6UJjsSixB0iHKoWxE5uu2Q/DgtpOhPIojN0Zl1whvOd7PoHs2P0s5eA==
 
 "@types/stack-utils@^1.0.1":
   version "1.0.1"
@@ -7581,6 +7616,14 @@ map-visit@^1.0.0:
   dependencies:
     object-visit "^1.0.0"
 
+match-sorter@^6.3.0:
+  version "6.3.0"
+  resolved "https://registry.yarnpkg.com/match-sorter/-/match-sorter-6.3.0.tgz#454a1b31ed218cddbce6231a0ecb5fdc549fed01"
+  integrity sha512-efYOf/wUpNb8FgNY+cOD2EIJI1S5I7YPKsw0LBp7wqPh5pmMS6i/wr3ZWwfwrAw1NvqTA2KUReVRWDX84lUcOQ==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+    remove-accents "0.4.2"
+
 md5.js@^1.3.4:
   version "1.3.5"
   resolved "https://registry.yarnpkg.com/md5.js/-/md5.js-1.3.5.tgz#b5d07b8e3216e3e27cd728d72f70d1e6a342005f"
@@ -9358,7 +9401,7 @@ prompts@^2.0.1:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@^15.6.2, prop-types@^15.7.2:
+prop-types@^15.5.8, prop-types@^15.6.2, prop-types@^15.7.2:
   version "15.7.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
@@ -9586,6 +9629,13 @@ react-focus-lock@2.5.0:
     react-clientside-effect "^1.2.2"
     use-callback-ref "^1.2.1"
     use-sidecar "^1.0.1"
+
+react-input-autosize@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/react-input-autosize/-/react-input-autosize-3.0.0.tgz#6b5898c790d4478d69420b55441fcc31d5c50a85"
+  integrity sha512-nL9uS7jEs/zu8sqwFE5MAPx6pPkNAriACQ2rGLlqmKr2sPGtN7TXTyDdQt4lbNXVx7Uzadb40x8qotIuru6Rhg==
+  dependencies:
+    prop-types "^15.5.8"
 
 react-is@^16.12.0, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.4:
   version "16.13.1"
@@ -9815,6 +9865,11 @@ relateurl@^0.2.7:
   version "0.2.7"
   resolved "https://registry.yarnpkg.com/relateurl/-/relateurl-0.2.7.tgz#54dbf377e51440aca90a4cd274600d3ff2d888a9"
   integrity sha1-VNvzd+UUQKypCkzSdGANP/LYiKk=
+
+remove-accents@0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/remove-accents/-/remove-accents-0.4.2.tgz#0a43d3aaae1e80db919e07ae254b285d9e1c7bb5"
+  integrity sha1-CkPTqq4egNuRngeuJUsoXZ4ce7U=
 
 remove-trailing-separator@^1.0.1:
   version "1.1.0"

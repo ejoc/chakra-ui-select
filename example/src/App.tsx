@@ -1,21 +1,35 @@
 import React, { useState } from 'react'
-import { chakra, ChakraProvider, extendTheme, Icon } from "@chakra-ui/react"
-import { ChevronDownIcon } from '@chakra-ui/icons';
+import {
+  chakra,
+  ChakraProvider,
+  extendTheme,
+  FormControl,
+  FormLabel,
+  Icon
+} from '@chakra-ui/react'
+import { ChevronDownIcon } from '@chakra-ui/icons'
+import { matchSorter } from 'match-sorter'
 
 import {
   theme as selectTheme,
   Select,
   SelectControl,
-  SelectLabel,
   SelectIndicator,
   SelectMenu,
   SelectMenuList,
   SelectOption,
+  SelectSearchInput,
+  SelectClearIndicator,
+  ArrowIndicator,
+  SelectButton,
+  SelectValue,
+  SelectAutocomplete
 } from 'chakra-ui-select'
 
 const theme = extendTheme({
   components: {
-    SelectSingle: selectTheme
+    SelectSingle: selectTheme,
+    Autocomplete: selectTheme
   }
 })
 
@@ -24,10 +38,10 @@ const fruits = [
   { value: 'pear', label: 'Pear' },
   { value: 'orange', label: 'Orange' },
   { value: 'grape', label: 'Grape' },
-  { value: 'banana', label: 'Banana' },
-];
+  { value: 'banana', label: 'Banana' }
+]
 
-const fruitValues = fruits.map(item => item.value)
+const fruitValues = fruits.map((item) => item.value)
 
 type Option = {
   value: string
@@ -35,61 +49,33 @@ type Option = {
 }
 
 const App = () => {
-  const [selected, setSelected] = useState<Option | null>()
+  const [selected, setSelected] = useState<Option | null | undefined>()
+
+  const itemToString = (item: Option | null) => item?.label ?? ''
+
   return (
     <ChakraProvider theme={theme}>
-      <chakra.div my={4} maxW="lg" mx="auto">
+      <chakra.div my={4} maxW='lg' mx='auto'>
         <Select my={4}>
           {({ selectedItem }) => {
             return (
               <>
-              <SelectControl>
-                <SelectLabel>{selectedItem ?? 'Select'}</SelectLabel>
-                <SelectIndicator>
-                  <Icon as={ChevronDownIcon} />
-                </SelectIndicator>
-              </SelectControl>
-              <SelectMenu zIndex={10}>
-                <SelectMenuList>
-                  {fruitValues.map((option, index) => (
-                    <SelectOption
-                      key={option}
-                      value={option}
-                      index={index}
-                    >
-                      {option}
-                    </SelectOption>
-                  ))}
-                </SelectMenuList>
-                </SelectMenu>
-              </>
-            )
-          }}
-        </Select>
-
-
-        <Select my={4} itemToString={(item) => item?.label ?? 'Select'}>
-          {({ selectedItem }) => {
-            return (
-              <>
-              <SelectControl>
-                <SelectLabel>{selectedItem?.label ?? 'Select'}</SelectLabel>
-                <SelectIndicator>
-                  <Icon as={ChevronDownIcon} />
-                </SelectIndicator>
-              </SelectControl>
-              <SelectMenu zIndex={10}>
-                <SelectMenuList>
-                  {fruits.map((option, index) => (
-                    <SelectOption
-                      key={option.value}
-                      value={option}
-                      index={index}
-                    >
-                      {option.label}
-                    </SelectOption>
-                  ))}
-                </SelectMenuList>
+                <SelectControl>
+                  <SelectValue>{selectedItem ?? 'Select'}</SelectValue>
+                  <SelectIndicator>
+                    <ArrowIndicator>
+                      <Icon as={ChevronDownIcon} />
+                    </ArrowIndicator>
+                  </SelectIndicator>
+                </SelectControl>
+                <SelectMenu>
+                  <SelectMenuList>
+                    {fruitValues.map((option, index) => (
+                      <SelectOption key={option} value={option} index={index}>
+                        {option}
+                      </SelectOption>
+                    ))}
+                  </SelectMenuList>
                 </SelectMenu>
               </>
             )
@@ -100,65 +86,23 @@ const App = () => {
           my={4}
           value={selected}
           onChange={(changes) => setSelected(changes)}
-          itemToString={(item) => item?.label ?? 'Select'}
+          itemToString={itemToString}
         >
-          <SelectControl>
-            <SelectLabel>{selected?.label ?? 'Select'}</SelectLabel>
-            <SelectIndicator>
-              <Icon as={ChevronDownIcon} />
-            </SelectIndicator>
-          </SelectControl>
-          <SelectMenu zIndex={10}>
-            <SelectMenuList>
-              {fruits.map((option, index) => (
-                <SelectOption
-                  key={option.value}
-                  value={option}
-                  index={index}
-                >
-                  {option.label}
-                </SelectOption>
-              ))}
-            </SelectMenuList>
-          </SelectMenu>
-        </Select>
-
-        {/* <SelectMultiple
-          w="full"
-          // value={[]}
-          // onChange={(changes) => console.log('changes', changes)}
-          itemToString={(item: any) =>
-            item?.label ?? "label"
-          }
-        >
-          {({ selectedItems, getFilteredItems }) => {
+          {({ selectedItem }) => {
             return (
               <>
-                <SelectMultipleControl>
-                  {selectedItems?.length ? (
-                    <SelectedList>
-                      {selectedItems?.map((selectedItem, index) => (
-                        <SelectedItemTag
-                          key={`issues-item-${index}`}
-                          index={index}
-                          selectedItem={selectedItem}
-                        >
-                          {selectedItem.label}
-                        </SelectedItemTag>
-                      ))}
-                    </SelectedList>
-                  ) : (
-                    <span>
-                      label
-                    </span>
-                  )}
+                <SelectControl>
+                  <SelectValue>{itemToString(selectedItem)}</SelectValue>
                   <SelectIndicator>
-                    <Icon as={ChevronDownIcon} />
+                    <SelectClearIndicator />
+                    <ArrowIndicator>
+                      <Icon as={ChevronDownIcon} />
+                    </ArrowIndicator>
                   </SelectIndicator>
-                </SelectMultipleControl>
-                <SelectMenu zIndex={10}>
+                </SelectControl>
+                <SelectMenu>
                   <SelectMenuList>
-                    {getFilteredItems(fruits).map((option, index) => (
+                    {fruits.map((option, index) => (
                       <SelectOption
                         key={option.value}
                         value={option}
@@ -170,9 +114,109 @@ const App = () => {
                   </SelectMenuList>
                 </SelectMenu>
               </>
-            );
+            )
           }}
-        </SelectMultiple> */}
+        </Select>
+
+        <Select
+          my={4}
+          isDisabled
+          itemToString={itemToString}
+          defaultValue={fruits[2]}
+        >
+          {({ selectedItem }) => (
+            <>
+              <SelectControl>
+                <SelectValue>{itemToString(selectedItem)}</SelectValue>
+                <SelectIndicator>
+                  <SelectClearIndicator />
+                  <ArrowIndicator>
+                    <Icon as={ChevronDownIcon} />
+                  </ArrowIndicator>
+                </SelectIndicator>
+              </SelectControl>
+              <SelectMenu>
+                <SelectMenuList>
+                  {fruits.map((option, index) => (
+                    <SelectOption
+                      key={option.value}
+                      value={option}
+                      index={index}
+                    >
+                      {option.label}
+                    </SelectOption>
+                  ))}
+                </SelectMenuList>
+              </SelectMenu>
+            </>
+          )}
+        </Select>
+
+        <Select my={4} itemToString={itemToString} defaultValue={fruits[1]}>
+          <SelectAutocomplete>
+            <SelectSearchInput placeholder='Select' />
+            <SelectButton aria-label='toggle menu'>
+              <SelectIndicator>
+                <SelectClearIndicator />
+                <ArrowIndicator>
+                  <Icon as={ChevronDownIcon} />
+                </ArrowIndicator>
+              </SelectIndicator>
+            </SelectButton>
+          </SelectAutocomplete>
+          <SelectMenu>
+            <SelectMenuList>
+              {fruits.map((option, index) => (
+                <SelectOption key={option.value} value={option} index={index}>
+                  {option.label}
+                </SelectOption>
+              ))}
+            </SelectMenuList>
+          </SelectMenu>
+        </Select>
+
+        <Select my={4} itemToString={itemToString}>
+          {({ inputValue, getLabelProps }) => {
+            const getFilteredItems = (items: Option[]) => {
+              return matchSorter(items, inputValue ?? '', { keys: ['label'] })
+            }
+            const items = getFilteredItems(fruits)
+            return (
+              <FormControl>
+                <FormLabel {...getLabelProps()}>Select a fruit</FormLabel>
+                <SelectAutocomplete>
+                  <SelectSearchInput placeholder='Select' />
+                  <SelectButton aria-label='toggle menu'>
+                    <SelectIndicator>
+                      <SelectClearIndicator />
+                      <ArrowIndicator>
+                        <Icon as={ChevronDownIcon} />
+                      </ArrowIndicator>
+                    </SelectIndicator>
+                  </SelectButton>
+                </SelectAutocomplete>
+                <SelectMenu>
+                  <SelectMenuList>
+                    {items.map((option, index) => (
+                      <SelectOption
+                        key={option.value}
+                        value={option}
+                        index={index}
+                      >
+                        {option.label}
+                      </SelectOption>
+                    ))}
+                    {items.length <= 0 && (
+                      <chakra.div py={2} pl={3} pr={9}>
+                        No found
+                      </chakra.div>
+                    )}
+                  </SelectMenuList>
+                </SelectMenu>
+              </FormControl>
+            )
+          }}
+        </Select>
       </chakra.div>
     </ChakraProvider>
   )

@@ -10,7 +10,7 @@
 npm install --save chakra-ui-select
 ```
 
-## Usage
+## Basic Usage
 
 ```tsx
 import React, { Component } from 'react'
@@ -21,11 +21,11 @@ import {
   theme as selectTheme,
   Select,
   SelectControl,
-  SelectLabel,
   SelectIndicator,
   SelectMenu,
   SelectMenuList,
-  SelectOption
+  SelectOption,
+  SelectValue
 } from 'chakra-ui-select'
 
 const theme = extendTheme({
@@ -52,9 +52,11 @@ function Example() {
           return (
             <>
               <SelectControl>
-                <SelectLabel>{selectedItem ?? 'Select'}</SelectLabel>
+                <SelectValue>{selectedItem ?? 'Select'}</SelectValue>
                 <SelectIndicator>
-                  <Icon as={ChevronDownIcon} />
+                  <ArrowIndicator>
+                    <Icon as={ChevronDownIcon} />
+                  </ArrowIndicator>
                 </SelectIndicator>
               </SelectControl>
               <SelectMenu>
@@ -71,6 +73,37 @@ function Example() {
         }}
       </Select>
     </ChakraProvider>
+  )
+}
+```
+
+## Autocomplete example
+
+```tsx
+function AutocompleteExample() {
+  return (
+    <Select my={4} itemToString={itemToString} defaultValue={fruits[1]}>
+      <SelectAutocomplete>
+        <SelectSearchInput placeholder='Select' />
+        <SelectButton aria-label='toggle menu'>
+          <SelectIndicator>
+            <SelectClearIndicator />
+            <ArrowIndicator>
+              <Icon as={ChevronDownIcon} />
+            </ArrowIndicator>
+          </SelectIndicator>
+        </SelectButton>
+      </SelectAutocomplete>
+      <SelectMenu>
+        <SelectMenuList>
+          {fruits.map((option, index) => (
+            <SelectOption key={option.value} value={option} index={index}>
+              {option.label}
+            </SelectOption>
+          ))}
+        </SelectMenuList>
+      </SelectMenu>
+    </Select>
   )
 }
 ```
