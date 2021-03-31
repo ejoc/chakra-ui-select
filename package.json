@@ -66,6 +66,7 @@
     "dist"
   ],
   "dependencies": {
+    "@chakra-ui/icon": "^1.1.3",
     "@chakra-ui/tag": "^1.1.1",
     "@chakra-ui/theme-tools": "^1.0.4",
     "@chakra-ui/utils": "^1.2.0",
