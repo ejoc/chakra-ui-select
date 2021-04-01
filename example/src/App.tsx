@@ -64,7 +64,7 @@ const App = () => {
                   <SelectValue>{selectedItem ?? 'Select'}</SelectValue>
                   <SelectIndicator>
                     <ArrowIndicator>
-                      <Icon as={ChevronDownIcon} />
+                      <Icon aria-hidden w={6} h={6} as={ChevronDownIcon} />
                     </ArrowIndicator>
                   </SelectIndicator>
                 </SelectControl>
@@ -96,7 +96,7 @@ const App = () => {
                   <SelectIndicator>
                     <SelectClearIndicator />
                     <ArrowIndicator>
-                      <Icon as={ChevronDownIcon} />
+                      <Icon as={ChevronDownIcon} w={6} h={6} />
                     </ArrowIndicator>
                   </SelectIndicator>
                 </SelectControl>
@@ -131,7 +131,7 @@ const App = () => {
                 <SelectIndicator>
                   <SelectClearIndicator />
                   <ArrowIndicator>
-                    <Icon as={ChevronDownIcon} />
+                    <Icon as={ChevronDownIcon} w={6} h={6} />
                   </ArrowIndicator>
                 </SelectIndicator>
               </SelectControl>
@@ -153,26 +153,45 @@ const App = () => {
         </Select>
 
         <Select my={4} itemToString={itemToString} defaultValue={fruits[1]}>
-          <SelectAutocomplete>
-            <SelectSearchInput placeholder='Select' />
-            <SelectButton aria-label='toggle menu'>
-              <SelectIndicator>
-                <SelectClearIndicator />
-                <ArrowIndicator>
-                  <Icon as={ChevronDownIcon} />
-                </ArrowIndicator>
-              </SelectIndicator>
-            </SelectButton>
-          </SelectAutocomplete>
-          <SelectMenu>
-            <SelectMenuList>
-              {fruits.map((option, index) => (
-                <SelectOption key={option.value} value={option} index={index}>
-                  {option.label}
-                </SelectOption>
-              ))}
-            </SelectMenuList>
-          </SelectMenu>
+          {({ inputValue }) => {
+            const getFilteredItems = (items: Option[]) => {
+              return matchSorter(items, inputValue ?? '', { keys: ['label'] })
+            }
+            const items = getFilteredItems(fruits)
+            return (
+              <>
+                <SelectAutocomplete>
+                  <SelectSearchInput placeholder='Select' />
+                  <SelectButton aria-label='toggle menu'>
+                    <SelectIndicator>
+                      <SelectClearIndicator />
+                      <ArrowIndicator>
+                        <Icon as={ChevronDownIcon} w={6} h={6} />
+                      </ArrowIndicator>
+                    </SelectIndicator>
+                  </SelectButton>
+                </SelectAutocomplete>
+                <SelectMenu>
+                  <SelectMenuList>
+                    {items.map((option, index) => (
+                      <SelectOption
+                        key={option.value}
+                        value={option}
+                        index={index}
+                      >
+                        {option.label}
+                      </SelectOption>
+                    ))}
+                    {items.length <= 0 && (
+                      <chakra.div py={2} pl={3} pr={9}>
+                        No found
+                      </chakra.div>
+                    )}
+                  </SelectMenuList>
+                </SelectMenu>
+              </>
+            )
+          }}
         </Select>
 
         <Select my={4} itemToString={itemToString}>
@@ -190,7 +209,7 @@ const App = () => {
                     <SelectIndicator>
                       <SelectClearIndicator />
                       <ArrowIndicator>
-                        <Icon as={ChevronDownIcon} />
+                        <Icon as={ChevronDownIcon} w={6} h={6} />
                       </ArrowIndicator>
                     </SelectIndicator>
                   </SelectButton>

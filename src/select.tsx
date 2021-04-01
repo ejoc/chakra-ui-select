@@ -37,7 +37,7 @@ export const SelectValue = forwardRef<SelectValueProps, 'div'>((props, ref) => {
       overflow='hidden'
       padding='2px 8px'
       boxSizing='border-box'
-      pr={12}
+      pr={16}
       w='100%'
       {...props}
     />
@@ -55,7 +55,7 @@ export const SelectIndicator = forwardRef<SelectIndicatorProps, 'div'>(
         flexShrink={0}
         alignItems='center'
         alignSelf='stretch'
-        padding='2px 8px'
+        pr={2}
         pos='absolute'
         insetY={0}
         right={0}
@@ -73,7 +73,6 @@ export const ArrowIndicator = forwardRef<SelectIndicatorProps, 'div'>(
     return (
       <chakra.div
         ref={ref}
-        as='span'
         display='flex'
         alignItems='center'
         pointerEvents='none'
@@ -87,14 +86,14 @@ export const ArrowIndicator = forwardRef<SelectIndicatorProps, 'div'>(
 export const SelectClearIndicator = forwardRef<ArrowIndicatorProps, 'div'>(
   (props, ref) => {
     const { onClick, className, ...rest } = props
-    const { selectedItem, clearSelection, inputRef } = useSelect()
+    const { selectedItem, clearSelection, inputRef, isDisabled } = useSelect()
     const _className = cx('chakra-select__clean-btn', className)
 
-    if (!selectedItem) return null
+    if (!selectedItem || isDisabled) return null
     return (
       <chakra.div
         d='flex'
-        padding={1}
+        p={2}
         ref={ref}
         aria-hidden
         className={_className}
@@ -102,6 +101,10 @@ export const SelectClearIndicator = forwardRef<ArrowIndicatorProps, 'div'>(
         tabIndex={-1}
         outline='none'
         color='gray.500'
+        w='100%'
+        h='100%'
+        alignItems='center'
+        justifyContent='center'
         _hover={{ color: 'gray.600' }}
         {...rest}
         onClick={callAllHandlers(onClick, (event: any) => {
@@ -110,10 +113,12 @@ export const SelectClearIndicator = forwardRef<ArrowIndicatorProps, 'div'>(
           inputRef?.current?.focus()
         })}
       >
-        <Icon focusable='false' aria-hidden h={2} w={2}>
+        <Icon focusable='false' aria-hidden boxSize='1em' stroke='currentColor'>
           <path
-            fill='currentColor'
-            d='M.439,21.44a1.5,1.5,0,0,0,2.122,2.121L11.823,14.3a.25.25,0,0,1,.354,0l9.262,9.263a1.5,1.5,0,1,0,2.122-2.121L14.3,12.177a.25.25,0,0,1,0-.354l9.263-9.262A1.5,1.5,0,0,0,21.439.44L12.177,9.7a.25.25,0,0,1-.354,0L2.561.44A1.5,1.5,0,0,0,.439,2.561L9.7,11.823a.25.25,0,0,1,0,.354Z'
+            strokeLinecap='round'
+            strokeLinejoin='round'
+            strokeWidth='2'
+            d='M6 18L18 6M6 6l12 12'
           />
         </Icon>
       </chakra.div>

@@ -16,6 +16,7 @@ npm install --save chakra-ui-select
 import React, { Component } from 'react'
 import { chakra, ChakraProvider, extendTheme, Icon } from '@chakra-ui/react'
 import { ChevronDownIcon } from '@chakra-ui/icons'
+import { matchSorter } from 'match-sorter'
 
 import {
   theme as selectTheme,
@@ -83,26 +84,41 @@ function Example() {
 function AutocompleteExample() {
   return (
     <Select my={4} itemToString={itemToString} defaultValue={fruits[1]}>
-      <SelectAutocomplete>
-        <SelectSearchInput placeholder='Select' />
-        <SelectButton aria-label='toggle menu'>
-          <SelectIndicator>
-            <SelectClearIndicator />
-            <ArrowIndicator>
-              <Icon as={ChevronDownIcon} />
-            </ArrowIndicator>
-          </SelectIndicator>
-        </SelectButton>
-      </SelectAutocomplete>
-      <SelectMenu>
-        <SelectMenuList>
-          {fruits.map((option, index) => (
-            <SelectOption key={option.value} value={option} index={index}>
-              {option.label}
-            </SelectOption>
-          ))}
-        </SelectMenuList>
-      </SelectMenu>
+      {({ inputValue }) => {
+        const getFilteredItems = (items: Option[]) => {
+          return matchSorter(items, inputValue ?? '', { keys: ['label'] })
+        }
+        const items = getFilteredItems(fruits)
+        return (
+          <>
+            <SelectAutocomplete>
+              <SelectSearchInput placeholder='Select' />
+              <SelectButton aria-label='toggle menu'>
+                <SelectIndicator>
+                  <SelectClearIndicator />
+                  <ArrowIndicator>
+                    <Icon as={ChevronDownIcon} w={6} h={6} />
+                  </ArrowIndicator>
+                </SelectIndicator>
+              </SelectButton>
+            </SelectAutocomplete>
+            <SelectMenu>
+              <SelectMenuList>
+                {items.map((option, index) => (
+                  <SelectOption key={option.value} value={option} index={index}>
+                    {option.label}
+                  </SelectOption>
+                ))}
+                {items.length <= 0 && (
+                  <chakra.div py={2} pl={3} pr={9}>
+                    No found
+                  </chakra.div>
+                )}
+              </SelectMenuList>
+            </SelectMenu>
+          </>
+        )
+      }}
     </Select>
   )
 }
