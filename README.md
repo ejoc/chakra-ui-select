@@ -140,6 +140,70 @@ function SelectSingleWrapper() {
 }
 ```
 
+## Select Multiple example
+
+```tsx
+function SelectMultipleExample() {
+  return (
+    <SelectMultiple my={4} w='full' itemToString={itemToString}>
+      {({ selectedItems, inputValue, getLabelProps }) => {
+        const getFilteredItems = (items: Option[]) => {
+          return items.filter((item: Option) => {
+            if (inputValue) {
+              return (
+                selectedItems.indexOf(item) < 0 &&
+                itemToString(item)
+                  .toLowerCase()
+                  .startsWith(inputValue.toLowerCase())
+              )
+            }
+            return selectedItems.indexOf(item) < 0
+          })
+        }
+        const items = getFilteredItems(fruits)
+        return (
+          <>
+            <SelectControl>
+              <SelectValueContainer>
+                {selectedItems?.map((selectedItem, index) => (
+                  <SelectedItemTag
+                    key={`issues-item-${index}`}
+                    index={index}
+                    selectedItem={selectedItem}
+                  >
+                    {selectedItem.label}
+                  </SelectedItemTag>
+                ))}
+                <SelectSearchInput placeholder='Select' />
+              </SelectValueContainer>
+              <SelectButton aria-label='toggle menu'>
+                <ArrowIndicator>
+                  <Icon as={ChevronDownIcon} boxSize='1em' />
+                </ArrowIndicator>
+              </SelectButton>
+            </SelectControl>
+            <SelectMenu>
+              <SelectMenuList>
+                {items.map((option, index) => (
+                  <SelectOption key={option.value} value={option} index={index}>
+                    {option.label}
+                  </SelectOption>
+                ))}
+                {items.length <= 0 && (
+                  <chakra.div py={2} pl={3} pr={9}>
+                    No found
+                  </chakra.div>
+                )}
+              </SelectMenuList>
+            </SelectMenu>
+          </>
+        )
+      }}
+    </SelectMultiple>
+  )
+}
+```
+
 ## License
 
 MIT © [ejoc](https://github.com/ejoc)

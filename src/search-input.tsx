@@ -20,11 +20,7 @@ const sizerStyle = {
   whiteSpace: 'pre'
 }
 
-const copyStyles = (
-  styles: CSSStyleDeclaration,
-  node: any
-  // node: MutableRefObject<HTMLChakraProps<'div'>>
-) => {
+const copyStyles = (styles: CSSStyleDeclaration, node: HTMLDivElement) => {
   node.style.fontSize = styles.fontSize
   node.style.fontFamily = styles.fontFamily
   node.style.fontWeight = styles.fontWeight
@@ -68,7 +64,7 @@ export const SearchInput = forwardRef<SearchInputProps, 'input'>(
 
       let newInputWidth
       if (
-        props.placeholder &&
+        placeholder &&
         (!props.value || (props.value && placeholderIsMinWidth))
       ) {
         newInputWidth =
@@ -80,19 +76,13 @@ export const SearchInput = forwardRef<SearchInputProps, 'input'>(
         newInputWidth = sizerRef.current?.scrollWidth + 2
       }
 
-      const extraWidth =
-        props.type === 'number' && props.extraWidth === undefined
-          ? 16
-          : parseInt(props.extraWidth as string) || 0
-      newInputWidth += extraWidth
-
       if (minWidth && newInputWidth < minWidth) {
         newInputWidth = minWidth
       }
       if (newInputWidth !== inputWidth) {
         setInputWidth(newInputWidth)
       }
-    }, [sizerValue])
+    }, [sizerValue, minWidth, inputWidth, placeholderIsMinWidth, placeholder])
 
     const copyInputStyles = () => {
       if (!window.getComputedStyle || !inputRef?.current) {
@@ -103,7 +93,9 @@ export const SearchInput = forwardRef<SearchInputProps, 'input'>(
       if (!inputStyles) {
         return
       }
-      copyStyles(inputStyles, sizerRef.current)
+      if (sizerRef.current) {
+        copyStyles(inputStyles, sizerRef.current)
+      }
       if (placeHolderSizerRef.current) {
         copyStyles(inputStyles, placeHolderSizerRef.current)
       }
@@ -113,7 +105,6 @@ export const SearchInput = forwardRef<SearchInputProps, 'input'>(
       d: 'inline-block',
       visibility: isDisabled ? 'hidden' : 'visible',
       color: 'gray.800',
-      w: '100%',
       ...wrapperStyle
     } as HTMLChakraProps<'div'>
 
@@ -126,7 +117,6 @@ export const SearchInput = forwardRef<SearchInputProps, 'input'>(
       color: 'inherit',
       boxSizing: 'content-box',
       background: '0px center',
-      maxW: '100%',
       ...inputProps
     } as HTMLChakraProps<'input'>
 

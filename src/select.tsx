@@ -60,7 +60,7 @@ export const SelectIndicator = forwardRef<SelectIndicatorProps, 'div'>(
 )
 
 export interface ArrowIndicatorProps extends HTMLChakraProps<'div'> {}
-export const ArrowIndicator = forwardRef<SelectIndicatorProps, 'div'>(
+export const ArrowIndicator = forwardRef<ArrowIndicatorProps, 'div'>(
   (props, ref) => {
     return (
       <chakra.div
@@ -137,7 +137,13 @@ export const SelectControl = forwardRef<SelectControlProps, 'div'>(
 export type SelectButtonProps = HTMLChakraProps<'button'> & FormControlOptions
 export const SelectButton = forwardRef<SelectButtonProps, 'button'>(
   (props, ref) => {
-    const { getToggleButtonProps, inputRef, isDisabled } = useSelect()
+    const {
+      getToggleButtonProps,
+      inputRef,
+      isDisabled,
+      isOpen,
+      getDropdownProps
+    } = useSelect()
     const button = useFormControl({ isDisabled, ...props })
     const styles = useStyles()
     return (
@@ -146,6 +152,7 @@ export const SelectButton = forwardRef<SelectButtonProps, 'button'>(
         ref={ref}
         {...button}
         {...getToggleButtonProps({
+          ...getDropdownProps?.({ preventKeyAction: isOpen }),
           onClick: () => inputRef?.current?.focus()
         })}
       />
@@ -160,8 +167,8 @@ export const SelectSearchInput = forwardRef<SelectSearchInputProps, 'input'>(
       getInputProps,
       isDisabled,
       inputRef,
-      selectedItem,
-      itemToString
+      getDropdownProps,
+      selectedItems
     } = useSelect()
     const input = useFormControl({ isDisabled, ...props })
     useImperativeHandle(ref, () => ({
@@ -169,33 +176,30 @@ export const SelectSearchInput = forwardRef<SelectSearchInputProps, 'input'>(
         inputRef?.current?.focus()
       }
     }))
-    const placeholder = itemToString(selectedItem) || props.placeholder
+    const placeholder =
+      selectedItems && selectedItems.length > 0 ? '' : props.placeholder
     return (
       <Fragment>
-        {isDisabled && placeholder && (
-          <chakra.span
-            pos='absolute'
-            overflow='hidden'
-            textOverflow='ellipsis'
-            whiteSpace='nowrap'
-          >
-            {placeholder}
-          </chakra.span>
-        )}
         <chakra.div
+          zIndex={1}
           m={0.5}
           pb={0.5}
           pt={0.5}
           visibility={isDisabled ? 'hidden' : 'visible'}
-          w='100%'
         >
           <SearchInput
+            tabIndex={-1}
             isDisabled={isDisabled}
             type='text'
             autoCapitalize='none'
-            ref={inputRef}
             {...input}
-            {...getInputProps()}
+            {...getInputProps({
+              ref: inputRef,
+              ...getDropdownProps?.({
+                placeholder: placeholder,
+                ref: inputRef
+              })
+            })}
           />
         </chakra.div>
       </Fragment>

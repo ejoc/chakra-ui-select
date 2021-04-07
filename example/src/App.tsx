@@ -21,7 +21,8 @@ import {
   ArrowIndicator,
   SelectButton,
   SelectValueContainer,
-  SelectSingle
+  SelectMultiple,
+  SelectedItemTag
 } from 'chakra-ui-select'
 
 const theme = extendTheme({
@@ -50,6 +51,7 @@ const itemToString = (item: Option | null) => item?.label ?? ''
 
 const App = () => {
   const [selected, setSelected] = useState<Option | null | undefined>()
+  console.log('selected', selected)
 
   return (
     <ChakraProvider theme={theme}>
@@ -100,45 +102,6 @@ const App = () => {
 
         <Select
           my={4}
-          value={selected}
-          onChange={(changes) => setSelected(changes)}
-          itemToString={itemToString}
-        >
-          {({ selectedItem }) => {
-            return (
-              <>
-                <SelectControl>
-                  <SelectValueContainer>
-                    <chakra.span d='block' isTruncated>
-                      {itemToString(selectedItem)}
-                    </chakra.span>
-                  </SelectValueContainer>
-                  <SelectButton aria-label='toggle menu'>
-                    <ArrowIndicator>
-                      <Icon as={ChevronDownIcon} boxSize='1em' />
-                    </ArrowIndicator>
-                  </SelectButton>
-                </SelectControl>
-                <SelectMenu>
-                  <SelectMenuList>
-                    {fruits.map((option, index) => (
-                      <SelectOption
-                        key={option.value}
-                        value={option}
-                        index={index}
-                      >
-                        {itemToString(option)}
-                      </SelectOption>
-                    ))}
-                  </SelectMenuList>
-                </SelectMenu>
-              </>
-            )
-          }}
-        </Select>
-
-        <Select
-          my={4}
           isDisabled
           itemToString={itemToString}
           defaultValue={fruits[3]}
@@ -172,7 +135,12 @@ const App = () => {
           )}
         </Select>
 
-        <Select my={4} itemToString={itemToString} defaultValue={fruits[1]}>
+        <Select
+          my={4}
+          itemToString={itemToString}
+          value={selected}
+          onChange={(changes) => setSelected(changes)}
+        >
           {({ inputValue }) => {
             const getFilteredItems = (items: Option[]) => {
               return matchSorter(items, inputValue ?? '', { keys: ['label'] })
@@ -255,7 +223,68 @@ const App = () => {
           }}
         </Select>
 
-        <SelectSingle options={fruits} placeholder='Select' isSearchable />
+        <FormControl>
+          <SelectMultiple my={4} w='full' itemToString={itemToString}>
+            {({ selectedItems, inputValue, getLabelProps }) => {
+              const getFilteredItems = (items: Option[]) => {
+                return items.filter((item: Option) => {
+                  if (inputValue) {
+                    return (
+                      selectedItems.indexOf(item) < 0 &&
+                      itemToString(item)
+                        .toLowerCase()
+                        .startsWith(inputValue.toLowerCase())
+                    )
+                  }
+                  return selectedItems.indexOf(item) < 0
+                })
+              }
+              const items = getFilteredItems(fruits)
+              return (
+                <>
+                  <FormLabel {...getLabelProps()}>Multi</FormLabel>
+                  <SelectControl>
+                    <SelectValueContainer>
+                      {selectedItems?.map((selectedItem, index) => (
+                        <SelectedItemTag
+                          key={`issues-item-${index}`}
+                          index={index}
+                          selectedItem={selectedItem}
+                        >
+                          {selectedItem.label}
+                        </SelectedItemTag>
+                      ))}
+                      <SelectSearchInput placeholder='Select' />
+                    </SelectValueContainer>
+                    <SelectButton aria-label='toggle menu'>
+                      <ArrowIndicator>
+                        <Icon as={ChevronDownIcon} boxSize='1em' />
+                      </ArrowIndicator>
+                    </SelectButton>
+                  </SelectControl>
+                  <SelectMenu>
+                    <SelectMenuList>
+                      {items.map((option, index) => (
+                        <SelectOption
+                          key={option.value}
+                          value={option}
+                          index={index}
+                        >
+                          {option.label}
+                        </SelectOption>
+                      ))}
+                      {items.length <= 0 && (
+                        <chakra.div py={2} pl={3} pr={9}>
+                          No found
+                        </chakra.div>
+                      )}
+                    </SelectMenuList>
+                  </SelectMenu>
+                </>
+              )
+            }}
+          </SelectMultiple>
+        </FormControl>
       </chakra.div>
     </ChakraProvider>
   )
