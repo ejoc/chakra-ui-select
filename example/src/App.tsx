@@ -22,7 +22,8 @@ import {
   SelectButton,
   SelectValueContainer,
   SelectMultiple,
-  SelectedItemTag
+  SelectedItemTag,
+  SelectMultipleWrapper
 } from 'chakra-ui-select'
 
 const theme = extendTheme({
@@ -285,6 +286,8 @@ const App = () => {
             }}
           </SelectMultiple>
         </FormControl>
+
+        <SelectMultipleWrapper options={fruits} placeholder='Select' />
       </chakra.div>
     </ChakraProvider>
   )

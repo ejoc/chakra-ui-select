@@ -204,6 +204,14 @@ function SelectMultipleExample() {
 }
 ```
 
+## Select Multiple Wrapper example
+
+```tsx
+function SelectMultipleWrapperExample() {
+  return <SelectMultipleWrapper options={fruits} placeholder='Select' />
+}
+```
+
 ## License
 
 MIT © [ejoc](https://github.com/ejoc)

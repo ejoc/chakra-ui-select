@@ -70,7 +70,7 @@ export type SelectMultipleProps<Item = any> = Omit<
       isOpen: boolean
       highlightedIndex: number | null
       onClose?(): void
-      inputValue?: string | null
+      inputValue: string | null
       selectedItems: Array<Item>
       getLabelProps: PropGetters<Item>['getLabelProps']
     }>
