@@ -1,5 +1,5 @@
 import { ControllerStateAndHelpers } from 'downshift'
-import { createContext } from '@chakra-ui/utils'
+import { createContext } from '@chakra-ui/react-utils'
 import { RefObject } from 'react'
 
 type SelectContext<Item = any> = ControllerStateAndHelpers<Item> & {

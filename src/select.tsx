@@ -8,13 +8,8 @@ import {
   useStyles,
   forwardRef
 } from '@chakra-ui/system'
-import {
-  dataAttr,
-  MaybeRenderProp,
-  runIfFn,
-  cx,
-  callAllHandlers
-} from '@chakra-ui/utils'
+import { dataAttr, runIfFn, cx, callAllHandlers } from '@chakra-ui/utils'
+import { MaybeRenderProp } from '@chakra-ui/react-utils'
 import Icon from '@chakra-ui/icon'
 import { SearchInput } from './search-input'
 import Downshift, {
