@@ -44,27 +44,36 @@ const fruits = [
 ]
 
 const fruitValues = fruits.map((item) => item.value)
+const itemToString = (item: Option | null) => item?.label ?? ''
 
 function Example() {
   return (
     <ChakraProvider theme={theme}>
-      <Select my={4}>
+      <Select my={4} itemToString={itemToString}>
         {({ selectedItem }) => {
           return (
             <>
               <SelectControl>
-                <SelectValue>{selectedItem ?? 'Select'}</SelectValue>
-                <SelectIndicator>
+                <SelectValueContainer>
+                  <chakra.span d='block' isTruncated>
+                    {itemToString(selectedItem)}
+                  </chakra.span>
+                </SelectValueContainer>
+                <SelectButton aria-label='toggle menu'>
                   <ArrowIndicator>
-                    <Icon as={ChevronDownIcon} />
+                    <Icon as={ChevronDownIcon} boxSize='1em' />
                   </ArrowIndicator>
-                </SelectIndicator>
+                </SelectButton>
               </SelectControl>
               <SelectMenu>
                 <SelectMenuList>
-                  {fruitValues.map((option, index) => (
-                    <SelectOption key={option} value={option} index={index}>
-                      {option}
+                  {fruits.map((option, index) => (
+                    <SelectOption
+                      key={option.value}
+                      value={option}
+                      index={index}
+                    >
+                      {itemToString(option)}
                     </SelectOption>
                   ))}
                 </SelectMenuList>
@@ -91,22 +100,21 @@ function AutocompleteExample() {
         const items = getFilteredItems(fruits)
         return (
           <>
-            <SelectAutocomplete>
-              <SelectSearchInput placeholder='Select' />
+            <SelectControl>
+              <SelectValueContainer>
+                <SelectSearchInput placeholder='Select' />
+              </SelectValueContainer>
               <SelectButton aria-label='toggle menu'>
-                <SelectIndicator>
-                  <SelectClearIndicator />
-                  <ArrowIndicator>
-                    <Icon as={ChevronDownIcon} w={6} h={6} />
-                  </ArrowIndicator>
-                </SelectIndicator>
+                <ArrowIndicator>
+                  <Icon as={ChevronDownIcon} />
+                </ArrowIndicator>
               </SelectButton>
-            </SelectAutocomplete>
+            </SelectControl>
             <SelectMenu>
               <SelectMenuList>
                 {items.map((option, index) => (
                   <SelectOption key={option.value} value={option} index={index}>
-                    {option.label}
+                    {itemToString(option)}
                   </SelectOption>
                 ))}
                 {items.length <= 0 && (
@@ -121,6 +129,14 @@ function AutocompleteExample() {
       }}
     </Select>
   )
+}
+```
+
+## Select Single Wrapper example
+
+```tsx
+function SelectSingleWrapper() {
+  return <SelectSingle options={fruits} placeholder='Select' isSearchable />
 }
 ```
 

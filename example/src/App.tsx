@@ -14,22 +14,20 @@ import {
   theme as selectTheme,
   Select,
   SelectControl,
-  SelectIndicator,
   SelectMenu,
   SelectMenuList,
   SelectOption,
   SelectSearchInput,
-  SelectClearIndicator,
   ArrowIndicator,
   SelectButton,
-  SelectValue,
-  SelectAutocomplete
+  SelectValueContainer,
+  SelectSingle
 } from 'chakra-ui-select'
 
 const theme = extendTheme({
   components: {
-    SelectSingle: selectTheme,
-    Autocomplete: selectTheme
+    SelectSingle: selectTheme.SelectSingle,
+    SelectMultiple: selectTheme.SelectMultiple
   }
 })
 
@@ -48,10 +46,10 @@ type Option = {
   label: string
 }
 
+const itemToString = (item: Option | null) => item?.label ?? ''
+
 const App = () => {
   const [selected, setSelected] = useState<Option | null | undefined>()
-
-  const itemToString = (item: Option | null) => item?.label ?? ''
 
   return (
     <ChakraProvider theme={theme}>
@@ -61,12 +59,30 @@ const App = () => {
             return (
               <>
                 <SelectControl>
-                  <SelectValue>{selectedItem ?? 'Select'}</SelectValue>
-                  <SelectIndicator>
+                  <SelectValueContainer>
+                    <chakra.span d='block' isTruncated>
+                      {selectedItem ?? 'Select'}
+                    </chakra.span>
+                  </SelectValueContainer>
+                  <SelectButton>
                     <ArrowIndicator>
-                      <Icon aria-hidden w={6} h={6} as={ChevronDownIcon} />
+                      <Icon
+                        aria-hidden
+                        boxSize='1em'
+                        fill='none'
+                        stroke='currentColor'
+                        viewBox='0 0 24 24'
+                        xmlns='http://www.w3.org/2000/svg'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth='2'
+                          d='M19 9l-7 7-7-7'
+                        />
+                      </Icon>
                     </ArrowIndicator>
-                  </SelectIndicator>
+                  </SelectButton>
                 </SelectControl>
                 <SelectMenu>
                   <SelectMenuList>
@@ -92,13 +108,16 @@ const App = () => {
             return (
               <>
                 <SelectControl>
-                  <SelectValue>{itemToString(selectedItem)}</SelectValue>
-                  <SelectIndicator>
-                    <SelectClearIndicator />
+                  <SelectValueContainer>
+                    <chakra.span d='block' isTruncated>
+                      {itemToString(selectedItem)}
+                    </chakra.span>
+                  </SelectValueContainer>
+                  <SelectButton aria-label='toggle menu'>
                     <ArrowIndicator>
-                      <Icon as={ChevronDownIcon} w={6} h={6} />
+                      <Icon as={ChevronDownIcon} boxSize='1em' />
                     </ArrowIndicator>
-                  </SelectIndicator>
+                  </SelectButton>
                 </SelectControl>
                 <SelectMenu>
                   <SelectMenuList>
@@ -108,7 +127,7 @@ const App = () => {
                         value={option}
                         index={index}
                       >
-                        {option.label}
+                        {itemToString(option)}
                       </SelectOption>
                     ))}
                   </SelectMenuList>
@@ -122,18 +141,19 @@ const App = () => {
           my={4}
           isDisabled
           itemToString={itemToString}
-          defaultValue={fruits[2]}
+          defaultValue={fruits[3]}
         >
           {({ selectedItem }) => (
             <>
               <SelectControl>
-                <SelectValue>{itemToString(selectedItem)}</SelectValue>
-                <SelectIndicator>
-                  <SelectClearIndicator />
+                <SelectValueContainer>
+                  {itemToString(selectedItem)}
+                </SelectValueContainer>
+                <SelectButton aria-label='toggle menu'>
                   <ArrowIndicator>
-                    <Icon as={ChevronDownIcon} w={6} h={6} />
+                    <Icon as={ChevronDownIcon} boxSize='1em' />
                   </ArrowIndicator>
-                </SelectIndicator>
+                </SelectButton>
               </SelectControl>
               <SelectMenu>
                 <SelectMenuList>
@@ -143,7 +163,7 @@ const App = () => {
                       value={option}
                       index={index}
                     >
-                      {option.label}
+                      {itemToString(option)}
                     </SelectOption>
                   ))}
                 </SelectMenuList>
@@ -160,17 +180,16 @@ const App = () => {
             const items = getFilteredItems(fruits)
             return (
               <>
-                <SelectAutocomplete>
-                  <SelectSearchInput placeholder='Select' />
+                <SelectControl>
+                  <SelectValueContainer>
+                    <SelectSearchInput placeholder='Select' />
+                  </SelectValueContainer>
                   <SelectButton aria-label='toggle menu'>
-                    <SelectIndicator>
-                      <SelectClearIndicator />
-                      <ArrowIndicator>
-                        <Icon as={ChevronDownIcon} w={6} h={6} />
-                      </ArrowIndicator>
-                    </SelectIndicator>
+                    <ArrowIndicator>
+                      <Icon as={ChevronDownIcon} />
+                    </ArrowIndicator>
                   </SelectButton>
-                </SelectAutocomplete>
+                </SelectControl>
                 <SelectMenu>
                   <SelectMenuList>
                     {items.map((option, index) => (
@@ -179,7 +198,7 @@ const App = () => {
                         value={option}
                         index={index}
                       >
-                        {option.label}
+                        {itemToString(option)}
                       </SelectOption>
                     ))}
                     {items.length <= 0 && (
@@ -203,17 +222,16 @@ const App = () => {
             return (
               <FormControl>
                 <FormLabel {...getLabelProps()}>Select a fruit</FormLabel>
-                <SelectAutocomplete>
-                  <SelectSearchInput placeholder='Select' />
+                <SelectControl>
+                  <SelectValueContainer>
+                    <SelectSearchInput placeholder='Select' />
+                  </SelectValueContainer>
                   <SelectButton aria-label='toggle menu'>
-                    <SelectIndicator>
-                      <SelectClearIndicator />
-                      <ArrowIndicator>
-                        <Icon as={ChevronDownIcon} w={6} h={6} />
-                      </ArrowIndicator>
-                    </SelectIndicator>
+                    <ArrowIndicator>
+                      <Icon as={ChevronDownIcon} boxSize='1em' />
+                    </ArrowIndicator>
                   </SelectButton>
-                </SelectAutocomplete>
+                </SelectControl>
                 <SelectMenu>
                   <SelectMenuList>
                     {items.map((option, index) => (
@@ -222,7 +240,7 @@ const App = () => {
                         value={option}
                         index={index}
                       >
-                        {option.label}
+                        {itemToString(option)}
                       </SelectOption>
                     ))}
                     {items.length <= 0 && (
@@ -236,6 +254,8 @@ const App = () => {
             )
           }}
         </Select>
+
+        <SelectSingle options={fruits} placeholder='Select' isSearchable />
       </chakra.div>
     </ChakraProvider>
   )
