@@ -9,13 +9,11 @@ import {
   SelectValueContainer,
   SelectMenu,
   SelectMenuList,
-  SelectOption
-} from './select'
-import {
+  SelectOption,
   SelectMultiple,
   SelectMultipleProps,
   SelectedItemTag
-} from './select-multiple'
+} from 'chakra-ui-select'
 import { DownshiftProps } from 'downshift'
 import { FormControlOptions, FormLabel } from '@chakra-ui/form-control'
 
@@ -54,7 +52,7 @@ export type SelectMutipleWrapperProps<Item> = FormControlOptions &
     label?: string
     placeholder?: string
     isSearchable?: boolean
-    noOptionsMessage?(inputValue: string | null): string | null
+    noOptionsMessage?(inputValue: string | null): string | null | undefined
     getOptionLabel?: DownshiftProps<Item>['itemToString']
     getOptionKey?: (item: Item) => string
     filterOption?(args: FilterOptionArgs<Item>): Item[]

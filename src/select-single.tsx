@@ -1,136 +1,323 @@
-import React, { Fragment } from 'react'
-import Icon from '@chakra-ui/icon'
-import { chakra } from '@chakra-ui/system'
+import React, { Fragment, useImperativeHandle, useRef } from 'react'
 import {
-  Select,
-  SelectControl,
-  SelectMenu,
-  SelectOption,
-  SelectSearchInput,
-  SelectButton,
-  SelectProps,
-  SelectValueContainer,
-  ArrowIndicator,
-  SelectMenuList
-} from './select'
-import { FormControlOptions } from '@chakra-ui/form-control'
-import { DownshiftProps } from 'downshift'
+  chakra,
+  ChakraProps,
+  HTMLChakraProps,
+  StylesProvider,
+  useMultiStyleConfig,
+  useStyles,
+  forwardRef
+} from '@chakra-ui/system'
+import { dataAttr, runIfFn, cx, callAllHandlers } from '@chakra-ui/utils'
+import { MaybeRenderProp } from '@chakra-ui/react-utils'
+import Icon from '@chakra-ui/icon'
+import Downshift, {
+  ControllerStateAndHelpers,
+  DownshiftProps,
+  GetItemPropsOptions,
+  PropGetters
+} from 'downshift'
+import { FormControlOptions, useFormControl } from '@chakra-ui/form-control'
+import { SearchInput } from './search-input'
+import { SelectProvider, useSelect } from './use-select'
 
-export interface Option {
-  value: string
-  label: string
-}
-
-interface FilterOptionArgs<Item> {
-  items: Item[]
-  getOptionLabel: (item: Item | null) => string
-  inputValue: string | null
-}
-
-export type SelectSingleProps<Item> = FormControlOptions &
-  Pick<SelectProps<Item>, 'value' | 'onChange' | 'defaultValue'> & {
-    options: Item[]
-    placeholder?: string
-    isSearchable?: boolean
-    noOptionsMessage?(inputValue: string | null): string | null
-    getOptionLabel?: DownshiftProps<Item>['itemToString']
-    getOptionKey?: (item?: Item) => string
-    filterOption?(args: FilterOptionArgs<Item>): Item[]
-  }
-
-function defaultFilterOption<Item>({
-  items,
-  inputValue,
-  getOptionLabel
-}: FilterOptionArgs<Item>): Item[] {
-  return items.filter(
-    (item) =>
-      !inputValue ||
-      getOptionLabel(item).toLowerCase().startsWith(inputValue.toLowerCase())
+export interface SelectValueContainerProps extends HTMLChakraProps<'div'> {}
+export function SelectValueContainer(props: SelectValueContainerProps) {
+  return (
+    <chakra.div
+      d='flex'
+      alignItems='center'
+      flex='1 1 0%'
+      flexWrap='wrap'
+      padding='2px 8px'
+      pos='relative'
+      overflow='hidden'
+      {...props}
+    />
   )
 }
 
-export function SelectSingle<Item = Option>({
-  options,
-  getOptionLabel = (i) => (i === null ? '' : ((i as unknown) as Option).label),
-  getOptionKey = (i) => (i === null ? '' : ((i as unknown) as Option).value),
+export interface ArrowIndicatorProps extends HTMLChakraProps<'div'> {}
+export const ArrowIndicator = forwardRef<ArrowIndicatorProps, 'div'>(
+  (props, ref) => {
+    return (
+      <chakra.div
+        ref={ref}
+        pos='absolute'
+        insetY={0}
+        right={0}
+        pr={2}
+        display='flex'
+        alignItems='center'
+        pointerEvents='none'
+        color='gray.500'
+        {...props}
+      />
+    )
+  }
+)
+
+export const SelectClearIndicator = forwardRef<ArrowIndicatorProps, 'div'>(
+  (props, ref) => {
+    const { onClick, className, ...rest } = props
+    const { selectedItem, clearSelection, inputRef, isDisabled } = useSelect()
+    const _className = cx('chakra-select__clean-btn', className)
+
+    if (!selectedItem || isDisabled) return null
+    return (
+      <chakra.div
+        d='flex'
+        p={2}
+        ref={ref}
+        aria-hidden
+        className={_className}
+        zIndex={1}
+        tabIndex={-1}
+        outline='none'
+        color='gray.500'
+        w='100%'
+        h='100%'
+        alignItems='center'
+        justifyContent='center'
+        _hover={{ color: 'gray.600' }}
+        {...rest}
+        onClick={callAllHandlers(onClick, (event: any) => {
+          event.stopPropagation()
+          clearSelection()
+          inputRef?.current?.focus()
+        })}
+      >
+        <Icon focusable='false' aria-hidden boxSize='1em' stroke='currentColor'>
+          <path
+            strokeLinecap='round'
+            strokeLinejoin='round'
+            strokeWidth='2'
+            d='M6 18L18 6M6 6l12 12'
+          />
+        </Icon>
+      </chakra.div>
+    )
+  }
+)
+
+export interface SelectControlProps extends HTMLChakraProps<'div'> {}
+
+export const SelectControl = forwardRef<SelectControlProps, 'div'>(
+  (props, ref) => {
+    const { isDisabled } = useSelect()
+    const ownProps = useFormControl({ isDisabled, ...props })
+    const styles = useStyles()
+
+    return <chakra.div ref={ref} __css={styles.control} {...ownProps} />
+  }
+)
+
+export type SelectButtonProps = HTMLChakraProps<'button'> & FormControlOptions
+export const SelectButton = forwardRef<SelectButtonProps, 'button'>(
+  (props, ref) => {
+    const { onClick } = props
+    const {
+      getToggleButtonProps,
+      inputRef,
+      isDisabled,
+      isOpen,
+      getDropdownProps
+    } = useSelect()
+    const button = useFormControl({ isDisabled, ...props })
+    const styles = useStyles()
+    return (
+      <chakra.button
+        __css={styles.button}
+        ref={ref}
+        {...button}
+        {...getToggleButtonProps({
+          ...getDropdownProps?.({ preventKeyAction: isOpen }),
+          onClick: callAllHandlers(onClick, (event: any) => {
+            event.stopPropagation()
+            inputRef?.current?.focus()
+          })
+        })}
+      />
+    )
+  }
+)
+
+export interface SelectSearchInputProps extends HTMLChakraProps<'input'> {}
+export const SelectSearchInput = forwardRef<SelectSearchInputProps, 'input'>(
+  (props, ref) => {
+    const {
+      getInputProps,
+      isDisabled,
+      inputRef,
+      getDropdownProps,
+      selectedItems
+    } = useSelect()
+    const input = useFormControl({ isDisabled, ...props })
+    useImperativeHandle(ref, () => ({
+      focus: () => {
+        inputRef?.current?.focus()
+      }
+    }))
+    const placeholder =
+      selectedItems && selectedItems.length > 0 ? '' : props.placeholder
+    return (
+      <Fragment>
+        <chakra.div
+          zIndex={1}
+          m={0.5}
+          pb={0.5}
+          pt={0.5}
+          visibility={isDisabled ? 'hidden' : 'visible'}
+        >
+          <SearchInput
+            tabIndex={-1}
+            isDisabled={isDisabled}
+            type='text'
+            autoCapitalize='none'
+            {...input}
+            {...getInputProps({
+              ref: inputRef,
+              ...getDropdownProps?.({
+                placeholder: placeholder,
+                ref: inputRef
+              })
+            })}
+          />
+        </chakra.div>
+      </Fragment>
+    )
+  }
+)
+
+export type SelectOptionProps<Item = any> = Omit<
+  GetItemPropsOptions<Item>,
+  'item' | 'disabled' | 'value'
+> &
+  Omit<ChakraProps, 'value'> & {
+    value: GetItemPropsOptions<Item>['item']
+    isDisabled?: boolean
+    children: MaybeRenderProp<{
+      isSelected?: boolean
+      isActive?: boolean
+    }>
+  }
+
+export function SelectOption<Item = any>({
+  children,
   value,
-  onChange,
-  isSearchable,
-  placeholder,
-  noOptionsMessage = () => 'No options',
-  filterOption = defaultFilterOption
-}: SelectSingleProps<Item>) {
+  index,
+  isDisabled,
+  ...props
+}: SelectOptionProps<Item>) {
+  const { getItemProps, selectedItem, highlightedIndex } = useSelect()
+  const styles = useStyles()
+  const isSelected = selectedItem === value
+  const isActive = highlightedIndex === index
   return (
-    <Select itemToString={getOptionLabel} value={value} onChange={onChange}>
-      {({ selectedItem, inputValue }) => {
-        const items = isSearchable
-          ? filterOption({
-              items: options,
-              inputValue,
-              getOptionLabel
-            })
-          : options
-        const showPlaceholder = !selectedItem && !isSearchable && !!placeholder
-        const noOptionsMsg = noOptionsMessage(inputValue)
-        const showNoOptionsMsg = items.length <= 0 && !!noOptionsMsg
-        return (
-          <Fragment>
-            <SelectControl>
-              <SelectValueContainer>
-                {!isSearchable && selectedItem && (
-                  <chakra.span>{getOptionLabel(selectedItem)}</chakra.span>
-                )}
-                {isSearchable && (
-                  <SelectSearchInput placeholder={placeholder} />
-                )}
-                {showPlaceholder && (
-                  <chakra.span color='gray.400' fontWeight='normal'>
-                    {placeholder}
-                  </chakra.span>
-                )}
-              </SelectValueContainer>
-              <SelectButton aria-label='toggle menu'>
-                <ArrowIndicator>
-                  <Icon
-                    aria-hidden
-                    boxSize='1em'
-                    fill='none'
-                    stroke='currentColor'
-                    viewBox='0 0 24 24'
-                    xmlns='http://www.w3.org/2000/svg'
-                  >
-                    <path
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      strokeWidth='2'
-                      d='M19 9l-7 7-7-7'
-                    />
-                  </Icon>
-                </ArrowIndicator>
-              </SelectButton>
-            </SelectControl>
-            <SelectMenu>
-              <SelectMenuList>
-                {items.map((option, index) => (
-                  <SelectOption
-                    key={getOptionKey(option)}
-                    value={option}
-                    index={index}
-                  >
-                    {getOptionLabel(option)}
-                  </SelectOption>
-                ))}
-                {showNoOptionsMsg && (
-                  <chakra.div py={2} pl={3} pr={9} color='gray.900'>
-                    {noOptionsMsg}
-                  </chakra.div>
-                )}
-              </SelectMenuList>
-            </SelectMenu>
-          </Fragment>
-        )
-      }}
-    </Select>
+    <chakra.li
+      bg={isActive ? 'gray.50' : 'white'}
+      data-disabled={dataAttr(isDisabled)}
+      {...getItemProps({
+        item: value,
+        index
+      })}
+      aria-selected={props.isSelected ? 'true' : `${isSelected}`}
+      __css={styles.option}
+      {...props}
+    >
+      {runIfFn(children, {
+        isSelected,
+        isActive
+      })}
+    </chakra.li>
+  )
+}
+
+export interface SelectMenuListProps extends HTMLChakraProps<'ul'> {}
+
+export const SelectMenuList = forwardRef<SelectMenuListProps, 'ul'>(
+  (props, ref) => {
+    const { isOpen } = useSelect()
+    const styles = useStyles()
+    if (!isOpen) return null
+    return <chakra.ul ref={ref} __css={styles.list} {...props} />
+  }
+)
+
+export interface SelectMenuProps extends HTMLChakraProps<'div'> {}
+
+export const SelectMenu = forwardRef<SelectMenuProps, 'div'>((props, ref) => {
+  const styles = useStyles()
+  const { getMenuProps } = useSelect()
+  return (
+    <chakra.div ref={ref} __css={styles.menu} {...getMenuProps()} {...props} />
+  )
+})
+
+export type SelectSingleProps<Item = any> = Omit<
+  HTMLChakraProps<'div'>,
+  'onChange' | 'defaultValue'
+> &
+  FormControlOptions &
+  Pick<
+    DownshiftProps<Item>,
+    'itemToString' | 'defaultIsOpen' | 'isOpen' | 'defaultHighlightedIndex'
+  > & {
+    value?: Item | null
+    defaultValue?: Item
+    onChange?(
+      selectedItem: Item | null | undefined,
+      stateAndHelpers?: ControllerStateAndHelpers<Item>
+    ): void
+    children: MaybeRenderProp<{
+      isOpen: boolean
+      highlightedIndex: number | null
+      selectedItem: Item | null
+      onClose?(): void
+      inputValue: string | null
+      getLabelProps: PropGetters<Item>['getLabelProps']
+    }>
+  }
+
+export function SelectSingle<Item = any>({
+  id,
+  children,
+  isOpen,
+  defaultValue,
+  defaultIsOpen,
+  defaultHighlightedIndex = 0,
+  onChange,
+  itemToString,
+  isDisabled,
+  ...props
+}: SelectSingleProps<Item>) {
+  const styles = useMultiStyleConfig('SelectSingle', {})
+  const inputRef = useRef<HTMLInputElement>(null)
+  return (
+    <Downshift
+      id={id}
+      onChange={onChange}
+      initialSelectedItem={defaultValue}
+      initialIsOpen={defaultIsOpen}
+      isOpen={isOpen}
+      itemToString={itemToString}
+      initialHighlightedIndex={defaultHighlightedIndex}
+    >
+      {(downshift) => (
+        <chakra.div pos='relative' {...props} {...downshift.getRootProps()}>
+          <StylesProvider value={styles}>
+            <SelectProvider value={{ ...downshift, isDisabled, inputRef }}>
+              {runIfFn(children, {
+                inputValue: downshift.inputValue,
+                isOpen: downshift.isOpen,
+                highlightedIndex: downshift.highlightedIndex,
+                selectedItem: downshift.selectedItem,
+                getLabelProps: downshift.getLabelProps
+              })}
+            </SelectProvider>
+          </StylesProvider>
+        </chakra.div>
+      )}
+    </Downshift>
   )
 }

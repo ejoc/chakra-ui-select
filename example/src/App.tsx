@@ -12,7 +12,7 @@ import { matchSorter } from 'match-sorter'
 
 import {
   theme as selectTheme,
-  Select,
+  SelectSingle,
   SelectControl,
   SelectMenu,
   SelectMenuList,
@@ -22,9 +22,9 @@ import {
   SelectButton,
   SelectValueContainer,
   SelectMultiple,
-  SelectedItemTag,
-  SelectMultipleWrapper
+  SelectedItemTag
 } from 'chakra-ui-select'
+import { SelectMultipleWrapper } from './components/SelectMultipleWrapper'
 
 const theme = extendTheme({
   components: {
@@ -52,12 +52,11 @@ const itemToString = (item: Option | null) => item?.label ?? ''
 
 const App = () => {
   const [selected, setSelected] = useState<Option | null | undefined>()
-  console.log('selected', selected)
 
   return (
     <ChakraProvider theme={theme}>
       <chakra.div my={4} maxW='lg' mx='auto'>
-        <Select my={4}>
+        <SelectSingle my={4}>
           {({ selectedItem }) => {
             return (
               <>
@@ -99,9 +98,9 @@ const App = () => {
               </>
             )
           }}
-        </Select>
+        </SelectSingle>
 
-        <Select
+        <SelectSingle
           my={4}
           isDisabled
           itemToString={itemToString}
@@ -134,13 +133,14 @@ const App = () => {
               </SelectMenu>
             </>
           )}
-        </Select>
+        </SelectSingle>
 
-        <Select
+        <SelectSingle
           my={4}
           itemToString={itemToString}
           value={selected}
           onChange={(changes) => setSelected(changes)}
+          defaultHighlightedIndex={3}
         >
           {({ inputValue }) => {
             const getFilteredItems = (items: Option[]) => {
@@ -180,9 +180,9 @@ const App = () => {
               </>
             )
           }}
-        </Select>
+        </SelectSingle>
 
-        <Select my={4} itemToString={itemToString}>
+        <SelectSingle my={4} itemToString={itemToString}>
           {({ inputValue, getLabelProps }) => {
             const getFilteredItems = (items: Option[]) => {
               return matchSorter(items, inputValue ?? '', { keys: ['label'] })
@@ -222,7 +222,7 @@ const App = () => {
               </FormControl>
             )
           }}
-        </Select>
+        </SelectSingle>
 
         <FormControl>
           <SelectMultiple my={4} w='full' itemToString={itemToString}>

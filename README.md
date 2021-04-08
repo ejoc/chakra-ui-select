@@ -20,7 +20,7 @@ import { matchSorter } from 'match-sorter'
 
 import {
   theme as selectTheme,
-  Select,
+  SelectSingle,
   SelectControl,
   SelectIndicator,
   SelectMenu,
@@ -30,9 +30,7 @@ import {
 } from 'chakra-ui-select'
 
 const theme = extendTheme({
-  components: {
-    SelectSingle: selectTheme
-  }
+  components: { ...selectTheme }
 })
 
 const fruits = [
@@ -49,7 +47,7 @@ const itemToString = (item: Option | null) => item?.label ?? ''
 function Example() {
   return (
     <ChakraProvider theme={theme}>
-      <Select my={4} itemToString={itemToString}>
+      <SelectSingle my={4} itemToString={itemToString}>
         {({ selectedItem }) => {
           return (
             <>
@@ -81,7 +79,7 @@ function Example() {
             </>
           )
         }}
-      </Select>
+      </SelectSingle>
     </ChakraProvider>
   )
 }
@@ -92,7 +90,7 @@ function Example() {
 ```tsx
 function AutocompleteExample() {
   return (
-    <Select my={4} itemToString={itemToString} defaultValue={fruits[1]}>
+    <SelectSingle my={4} itemToString={itemToString} defaultValue={fruits[1]}>
       {({ inputValue }) => {
         const getFilteredItems = (items: Option[]) => {
           return matchSorter(items, inputValue ?? '', { keys: ['label'] })
@@ -127,7 +125,7 @@ function AutocompleteExample() {
           </>
         )
       }}
-    </Select>
+    </SelectSingle>
   )
 }
 ```

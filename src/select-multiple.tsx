@@ -15,8 +15,8 @@ import {
 import { runIfFn } from '@chakra-ui/utils'
 import { MaybeRenderProp } from '@chakra-ui/react-utils'
 import { Tag, TagLabel, TagCloseButton, TagProps } from '@chakra-ui/tag'
-import { useSelect, SelectProvider } from './use-select'
 import { FormControlOptions } from '@chakra-ui/form-control'
+import { useSelect, SelectProvider } from './use-select'
 
 export type SelectTagProps<
   Item = any
@@ -58,10 +58,10 @@ export type SelectMultipleProps<Item = any> = Omit<
   'onChange'
 > &
   FormControlOptions &
-  Pick<DownshiftProps<Item>, 'itemToString'> & {
-    isDisabled?: boolean
-    isInvalid?: boolean
-    isReadOnly?: boolean
+  Pick<
+    DownshiftProps<Item>,
+    'itemToString' | 'defaultIsOpen' | 'isOpen' | 'defaultHighlightedIndex'
+  > & {
     initialSelectedItems?: Array<Item>
     defaultSelectedItems?: Array<Item>
     value?: Item[] | undefined
@@ -77,6 +77,7 @@ export type SelectMultipleProps<Item = any> = Omit<
   }
 
 export function SelectMultiple<Item = any>({
+  id,
   children,
   onChange,
   initialSelectedItems = [],
@@ -84,6 +85,9 @@ export function SelectMultiple<Item = any>({
   itemToString,
   value,
   isDisabled,
+  defaultHighlightedIndex = 0,
+  defaultIsOpen,
+  isOpen,
   ...props
 }: SelectMultipleProps<Item>) {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -150,10 +154,14 @@ export function SelectMultiple<Item = any>({
   )
   return (
     <Downshift
+      id={id}
       stateReducer={stateReducer}
       onStateChange={onStateChange}
       selectedItem={null}
       itemToString={itemToString}
+      initialHighlightedIndex={defaultHighlightedIndex}
+      initialIsOpen={defaultIsOpen}
+      isOpen={isOpen}
     >
       {(downshift) => {
         const ctx = { ...getStateAndHelpers(downshift), isDisabled, inputRef }
